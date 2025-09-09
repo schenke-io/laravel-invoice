@@ -22,7 +22,7 @@ readonly class Vat
         }
         $this->id = sprintf('%05d', (int) round($rate * 1000));
         $decimals = str_ends_with($this->id, '0') ? 0 : 1;
-        $this->name = number_format($rate * 100, $decimals, ',').'% ';
+        $this->name = number_format($rate * 100, $decimals, ',').'%';
     }
 
     /**

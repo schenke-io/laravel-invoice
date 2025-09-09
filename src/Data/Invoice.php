@@ -3,6 +3,7 @@
 namespace SchenkeIo\Invoice\Data;
 
 use Carbon\Carbon;
+use SchenkeIo\Invoice\Exceptions\VatException;
 
 class Invoice
 {
@@ -30,7 +31,7 @@ class Invoice
     }
 
     /**
-     * cent based calculation to avoid numeric glitches in calculations
+     * cent based calculation to avoid numeric glitches
      */
     public function addLine(LineItem $lineItem): void
     {
@@ -44,13 +45,18 @@ class Invoice
     }
 
     /**
+     * formats the VAT values in a readable format
+     *
      * @return array<string,Currency>
+     *
+     * @throws VatException
      */
     public function vats(): array
     {
         $return = [];
         foreach ($this->vatCents as $id => $cents) {
-            $return[$id] = Currency::fromCents($cents);
+            $vat = Vat::fromId($id);
+            $return[$vat->name] = Currency::fromCents($cents);
         }
 
         return $return;

@@ -16,41 +16,8 @@ final readonly class Currency implements Wireable
     }
 
     /**
-     * Calculate the VAT amount from the gross price, given a VAT rate.
+     * static constructor from any value
      */
-    public function vatFromGross(Vat $vat): self
-    {
-        // The formula is: VAT = Gross * (Rate / (1 + Rate))
-        $factor = $vat->rate / (1 + $vat->rate);
-
-        return $this->times($factor);
-    }
-
-    /**
-     * Calculate the VAT amount from the net price, given a VAT rate.
-     */
-    public function vatFromNet(Vat $vat): self
-    {
-        // The formula is: VAT = Net * Rate
-        return $this->times($vat->rate);
-    }
-
-    public function fromGrossToNet(Vat $vat): self
-    {
-        // The formula is: Net = Gross / (1 + Rate)
-        $factor = 1 / (1 + $vat->rate);
-
-        return $this->times($factor);
-    }
-
-    public function fromNetToGross(Vat $vat): self
-    {
-        // The formula is: Gross = Net * (1 + Rate)
-        $factor = 1 + $vat->rate;
-
-        return $this->times($factor);
-    }
-
     public static function fromAny(mixed $value): Currency
     {
         // Normalize nulls and pure numerics early
@@ -83,47 +50,115 @@ final readonly class Currency implements Wireable
         return new self((float) $clean);
     }
 
+    /**
+     * static constructor from a float value
+     */
     public static function fromFloat(?float $value): self
     {
         return new self($value ?? 0);
     }
 
+    /**
+     * static constructor from cents
+     */
     public static function fromCents(int $cents): self
     {
         return new self(0.01 * $cents);
     }
 
+    /**
+     * VAT amount from the gross price, given a VAT rate.
+     */
+    public function vatFromGross(Vat $vat): self
+    {
+        // The formula is: VAT = Gross * (Rate / (1 + Rate))
+        $factor = $vat->rate / (1 + $vat->rate);
+
+        return $this->times($factor);
+    }
+
+    /**
+     * Calculate the VAT amount from the net price, given a VAT rate.
+     */
+    public function vatFromNet(Vat $vat): self
+    {
+        // The formula is: VAT = Net * Rate
+        return $this->times($vat->rate);
+    }
+
+    /**
+     * convert a gross value to a net value using VAT
+     */
+    public function fromGrossToNet(Vat $vat): self
+    {
+        // The formula is: Net = Gross / (1 + Rate)
+        $factor = 1 / (1 + $vat->rate);
+
+        return $this->times($factor);
+    }
+
+    /**
+     * Convert a net value to a gross value using VAT
+     */
+    public function fromNetToGross(Vat $vat): self
+    {
+        // The formula is: Gross = Net * (1 + Rate)
+        $factor = 1 + $vat->rate;
+
+        return $this->times($factor);
+    }
+
+    /**
+     * exports to float
+     */
     public function toFloat(): float
     {
         return round(0.01 * $this->centValue, 2);
     }
 
+    /**
+     * exports to formatted currency string
+     */
     public function str(): string
     {
         return $this->__toString().' €';
     }
 
+    /**
+     * formats the value in local way
+     */
     public function __toString(): string
     {
         return number_format($this->toFloat(), 2, ',', '');
     }
 
+    /**
+     * adds two objects
+     */
     public function plus(Currency $add): self
     {
         return new self($this->toFloat() + $add->toFloat());
     }
 
+    /**
+     * subtracts two objects
+     */
     public function minus(Currency $sub): self
     {
         return new self($this->toFloat() - $sub->toFloat());
     }
 
+    /**
+     * multiplies the object by a factor
+     */
     public function times(float $factor): self
     {
         return new self($this->toFloat() * $factor);
     }
 
     /**
+     * exports to Livewire format
+     *
      * @return array<string,int>
      */
     public function toLivewire(): array
@@ -132,6 +167,8 @@ final readonly class Currency implements Wireable
     }
 
     /**
+     * static constructor from Livewire format
+     *
      * @param  array<string,int>  $value
      */
     public static function fromLivewire($value): self
