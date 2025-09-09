@@ -1,7 +1,6 @@
 {
-    "name": "kschenke/invoice",
-    "description": "Erstellen einer Rechnung f\u00fcr Lexware",
-    "type": "library",
+    "name": "schenke-io/laravel-invoice",
+    "description": "Currency and Invoices in Laravel",
     "license": "MIT",
     "require": {
         "php": "^8.1",
