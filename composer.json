@@ -53,6 +53,7 @@
             "@test"
         ],
         "release": [
+            "@markdown",
             "@pint",
             "@analyse",
             "@coverage"

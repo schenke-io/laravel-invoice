@@ -1,6 +1,6 @@
 <!--
 
-This file was written by 'make-markdown.php' line 14 using
+This file was written by 'make-markdown.php' line 12 using
 SchenkeIo\PackagingTools\Markdown\MarkdownAssembler
 
 Do not edit manually as it will be overwritten.
@@ -11,7 +11,7 @@ Do not edit manually as it will be overwritten.
 [![](.github/coverage.svg)]()
 
 
-# laravel Invoice
+# Laravel Invoice
 
 Handling of:
 - Currency

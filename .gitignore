@@ -31,3 +31,6 @@ auth.json
 
 
 .badita.yaml
+.idea/
+.junie
+build/
