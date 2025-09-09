@@ -1,0 +1,11 @@
+name: Invoice
+id: invoice
+framework: package
+tree: schenke-io/packages
+backup:
+  recursive:
+    - docs
+    - resources
+    - workbench
+
+

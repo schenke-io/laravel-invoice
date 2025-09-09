@@ -1,0 +1,30 @@
+<?php
+
+use Carbon\Carbon;
+use SchenkeIo\Invoice\Data\Customer;
+use SchenkeIo\Invoice\Data\Invoice;
+use SchenkeIo\Invoice\Data\LineItem;
+use SchenkeIo\Invoice\Data\Vat;
+
+it('can generate an invoice', function () {
+    // Arrange
+    $customer = new Customer('John Doe', '123 Main St', '12345', 'New York', 'US');
+    $vat20 = new Vat(0.2);
+    $vat10 = new Vat(0.1);
+    $lineItem1 = new LineItem(3, 'Product A', 100, $vat20);
+    $lineItem2 = LineItem::fromItemNetPrice(2, 'Product B', 12.5, $vat10);
+    $lineItem3 = LineItem::fromItemGrossPrice(5, 'Product C', 10.6, $vat20);
+    $lineItem3 = LineItem::fromTotalGrossPrice(5, 'Product C', 60, $vat10);
+    $invoice = new Invoice('INV-123', Carbon::parse('2020-01-01'), $customer);
+
+    // Act
+    $invoice->addLine($lineItem1);
+    $invoice->addLine($lineItem2);
+    $invoice->addLine($lineItem3);
+
+    // Assert
+    expect($invoice->totalGrossPrice->toFloat())->toBe(187.5);
+    $vats = $invoice->vats();
+    expect($vats[$vat10->id]->toFloat())->toBe(64.09)
+        ->and($vats[$vat20->id]->toFloat())->toBe(72.22);
+});

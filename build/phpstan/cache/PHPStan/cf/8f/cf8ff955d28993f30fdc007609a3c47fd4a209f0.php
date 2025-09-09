@@ -1,0 +1,7 @@
+<?php declare(strict_types = 1);
+
+// variadic-method-SchenkeIo\Invoice\Data\LineItem-__construct-/tmp/PHPStantemp_folder64824/src/Data/LineItem.php
+return \PHPStan\Cache\CacheItem::__set_state(array(
+   'variableKey' => '1757447884-v4',
+   'data' => false,
+));
