@@ -14,13 +14,13 @@ readonly class LineItem
 
     public Currency $lineVatAmount;
 
-    public function __construct(public int $quantity, public string $name, float $totalGrossPrice, public Vat $vat)
+    private function __construct(public int $quantity, public string $name, float $totalGrossPrice, public Vat $vat)
     {
         $this->lineTotalGrossPrice = Currency::fromFloat($totalGrossPrice);
         $this->lineTotalNetPrice = $this->lineTotalGrossPrice->fromGrossToNet($vat);
         $this->itemGrossPrice = Currency::fromFloat($totalGrossPrice / $quantity);
         $this->itemNetPrice = $this->itemGrossPrice->fromGrossToNet($vat);
-        $this->lineVatAmount = Currency::fromCents($this->lineTotalGrossPrice->centValue - $this->itemNetPrice->centValue);
+        $this->lineVatAmount = Currency::fromCents($this->lineTotalGrossPrice->centValue - $this->lineTotalNetPrice->centValue);
     }
 
     public static function fromTotalGrossPrice(int $quantity, string $name, float $totalGrossPrice, Vat $vat): self
