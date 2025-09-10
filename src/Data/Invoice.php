@@ -103,7 +103,7 @@ class Invoice
 
         // fill the body
         foreach ($this->lineItems as $lineItem) {
-            $return['body'][] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
+            $return['body'][] = LineDisplay::lineItem($lineItem, $isGrossInvoice)->toArray();
         }
 
         $bruttoLine = LineDisplay::footerTotal(

@@ -52,10 +52,10 @@
             "@test"
         ],
         "release": [
-            "@markdown",
             "@pint",
             "@analyse",
-            "@coverage"
+            "@coverage",
+            "@markdown"
         ],
         "add": [
             "composer require --dev pestphp/pest"
