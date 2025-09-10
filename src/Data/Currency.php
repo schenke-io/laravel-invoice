@@ -175,4 +175,12 @@ final readonly class Currency implements Wireable
     {
         return new self($value['centValue'] / 100);
     }
+
+    /**
+     * Check if the object is empty (zero)
+     */
+    public function isEmpty(): bool
+    {
+        return $this->centValue === 0;
+    }
 }

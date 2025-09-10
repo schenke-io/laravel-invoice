@@ -42,6 +42,7 @@ Handling of:
 | times          | multiplies the object by a factor                              |
 | toLivewire     | exports to Livewire format                                     |
 | fromLivewire   | static constructor from Livewire format                        |
+| isEmpty        | Check if the object is empty (zero)                            |
 
 
 

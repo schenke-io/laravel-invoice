@@ -22,3 +22,17 @@ it('fails when incorrect VAT values are given', function ($rate) {
     0.6,
     19.0,
 ])->throws(VatException::class);
+
+it('can create DE Standard VAT', function () {
+    $vat = Vat::deStandard();
+    expect($vat->rate)->toBe(0.19)
+        ->and($vat->id)->toBe('190')
+        ->and($vat->name)->toBe('19%');
+});
+
+it('can create 0% VAT', function () {
+    $vat = new Vat(0.00);
+    expect($vat->rate)->toBe(0.00)
+        ->and($vat->id)->toBe('000')
+        ->and($vat->name)->toBe('0%');
+});

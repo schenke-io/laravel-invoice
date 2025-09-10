@@ -106,3 +106,13 @@ it('can subtract currencies', function ($cents1, $cents2, $expected) {
     ->with([
         [100, 50, 50],
     ]);
+
+it('can see if it is empty', function ($cents, bool $isEmpty) {
+    $c = Currency::fromCents($cents);
+    expect($c->isEmpty())->toBe($isEmpty);
+})->with([
+    [0, true],
+    [-1, false],
+    [1, false],
+    [1000000000, false],
+]);
