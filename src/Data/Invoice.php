@@ -140,9 +140,6 @@ class Invoice
         if (! $isGrossInvoice) {
             $return['footer'][] = $bruttoLine;
         }
-        $return['footer'][] = LineDisplay::footerTotal(
-            $this->totalGrossPrice, 'Gesamtbetrag (Brutto)', true
-        );
 
         return $return;
     }

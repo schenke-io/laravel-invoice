@@ -5,15 +5,13 @@ namespace SchenkeIo\Invoice\Data;
 readonly class LineDisplay
 {
     private function __construct(
-        public ?int    $quantity,
-        public string  $name,
+        public ?int $quantity,
+        public string $name,
         public ?string $singlePrice,
-        public string  $totalPrice,
-        public bool    $isBold,
-        public bool    $isEmpty
-    )
-    {
-    }
+        public string $totalPrice,
+        public bool $isBold,
+        public bool $isEmpty
+    ) {}
 
     public static function lineItem(LineItem $lineItem, bool $isGross = true): self
     {
