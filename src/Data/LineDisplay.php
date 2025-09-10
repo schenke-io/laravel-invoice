@@ -2,14 +2,15 @@
 
 namespace SchenkeIo\Invoice\Data;
 
-class LineDisplay
+readonly class LineDisplay
 {
     private function __construct(
-        public readonly ?int $quantity,
-        public readonly string $name,
-        public readonly ?string $singlePrice,
-        public readonly string $totalPrice,
-        public readonly bool $isBold
+        public ?int $quantity,
+        public string $name,
+        public ?string $singlePrice,
+        public string $totalPrice,
+        public bool $isBold,
+        public bool $isEmpty
     ) {}
 
     public static function lineItem(LineItem $lineItem, bool $isGross = true): self
@@ -26,12 +27,13 @@ class LineDisplay
             $lineItem->quantity,
             $lineItem->name,
             $singlePrice, $totalPrice,
-            false
+            false,
+            $lineItem->itemGrossPrice->isEmpty()
         );
     }
 
     public static function footerTotal(Currency $amount, string $text, bool $isBold): self
     {
-        return new self(null, $text, null, $amount->str(), $isBold);
+        return new self(null, $text, null, $amount->str(), $isBold, $amount->isEmpty());
     }
 }
