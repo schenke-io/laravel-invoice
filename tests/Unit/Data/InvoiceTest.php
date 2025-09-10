@@ -30,5 +30,7 @@ it('can generate an invoice', function () {
     expect($vats[$vatKeys[0]]->toFloat())->toBe(64.09)
         ->and($vats[$vatKeys[1]]->toFloat())->toBe(116.39)
         ->and($invoice->payMe())->toBeTrue()
-        ->and($invoice->isEmpty())->toBeFalse();
+        ->and($invoice->isEmpty())->toBeFalse()
+        ->and(strlen(json_encode($invoice->display(true))))->toBe(1160)
+        ->and(strlen(json_encode($invoice->display(false))))->toBe(1237);
 });
