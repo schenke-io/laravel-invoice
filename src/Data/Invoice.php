@@ -17,6 +17,8 @@ class Invoice
      */
     protected array $vatCents = [];
 
+    protected int $totalGramm = 0;
+
     public Currency $totalGrossPrice;
 
     public Currency $totalNetPrice;
@@ -28,6 +30,11 @@ class Invoice
     {
         $this->totalGrossPrice = Currency::fromCents(0);
         $this->totalNetPrice = Currency::fromCents(0);
+    }
+
+    public function addWeight(int $gramm): void
+    {
+        $this->totalGramm += $gramm;
     }
 
     /**
@@ -90,6 +97,8 @@ class Invoice
         $return = [];
         $return['invoiceId'] = $this->invoiceId;
         $return['invoiceDate'] = $this->invoiceDate->format('Y-m-d');
+        $return['totalGramm'] = $this->totalGramm;
+        $return['totalWeightText'] = $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g';
         $return['customer'] = $this->customer->toArray();
 
         // fill the body

@@ -23,6 +23,8 @@ it('can generate an invoice', function () {
     $invoice->addLine($lineItem3);
     $invoice->addLine($lineItem4);
 
+    $invoice->addWeight(123);
+
     // Assert
     expect($invoice->totalGrossPrice->toFloat())->toBe(240.5);
     $vats = $invoice->vats();
@@ -31,6 +33,6 @@ it('can generate an invoice', function () {
         ->and($vats[$vatKeys[1]]->toFloat())->toBe(116.39)
         ->and($invoice->payMe())->toBeTrue()
         ->and($invoice->isEmpty())->toBeFalse()
-        ->and(strlen(json_encode($invoice->display(true))))->toBe(1160)
-        ->and(strlen(json_encode($invoice->display(false))))->toBe(1237);
+        ->and(strlen(json_encode($invoice->display(true))))->toBe(1203)
+        ->and(strlen(json_encode($invoice->display(false))))->toBe(1280);
 });
