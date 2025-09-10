@@ -61,4 +61,14 @@ class Invoice
 
         return $return;
     }
+
+    public function payMe(): bool
+    {
+        return $this->totalGrossPrice->centValue > 0;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->totalGrossPrice->isEmpty();
+    }
 }

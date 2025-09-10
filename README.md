@@ -56,6 +56,8 @@ Handling of:
 |---------|--------------------------------------------------|
 | addLine | cent based calculation to avoid numeric glitches |
 | vats    | formats the VAT values in a readable format      |
+| payMe   | -                                                |
+| isEmpty | -                                                |
 
 
 

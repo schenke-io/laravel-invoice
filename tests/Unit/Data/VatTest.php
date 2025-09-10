@@ -4,7 +4,7 @@ use SchenkeIo\Invoice\Data\Vat;
 use SchenkeIo\Invoice\Exceptions\VatException;
 
 it('can convert rates to id and back', function ($rate) {
-    $vat = new Vat($rate);
+    $vat = Vat::fromRate($rate);
     $vatId = $vat->id;
     $vat2 = Vat::fromId($vatId);
     expect($vat->id)->toBe($vat2->id);
@@ -14,7 +14,7 @@ it('can convert rates to id and back', function ($rate) {
 ]);
 
 it('fails when incorrect VAT values are given', function ($rate) {
-    new Vat($rate);
+    Vat::fromRate($rate);
 })->with([
     -1,
     -0.1,
@@ -31,7 +31,7 @@ it('can create DE Standard VAT', function () {
 });
 
 it('can create 0% VAT', function () {
-    $vat = new Vat(0.00);
+    $vat = Vat::fromRate(0.00);
     expect($vat->rate)->toBe(0.00)
         ->and($vat->id)->toBe('000')
         ->and($vat->name)->toBe('0%');

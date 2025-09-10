@@ -45,7 +45,7 @@ it('can calculate VAT net and gross', function () {
     $net = 100.0;
     $tax = 19.0;
     $gross = 119.0;
-    $vat = new Vat($tax / 100);
+    $vat = Vat::fromRate($tax / 100);
     expect(Currency::fromFloat($net)->vatFromNet($vat)->toFloat())->toBe($tax)
         ->and(Currency::fromFloat($gross)->vatFromGross($vat)->toFloat())->toBe($tax);
 });
