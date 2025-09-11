@@ -35,7 +35,7 @@ it('can generate an invoice', function () {
         ->and($invoice->payMe())->toBeTrue()
         ->and($invoice->isEmpty())->toBeFalse()
         ->and($invoice->display(true))->toBeObject()
-        ->and(strlen(json_encode($invoice->display(false))))->toBe(1335);
+        ->and(strlen(json_encode($invoice->display(false))))->toBe(1392);
 });
 
 it('calculates VAT correctly', function () {

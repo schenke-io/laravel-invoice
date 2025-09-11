@@ -88,27 +88,28 @@ class Invoice
     /**
      * data for blade templates
      *
-     *
      * @throws VatException
      */
-    public function display(bool $isGrossInvoice): object
+    public function display(bool $isGrossInvoice): InvoiceDisplay
     {
         $bruttoLine = LineDisplay::footerTotal(
             $this->totalGrossPrice, 'Gesamtbetrag (Brutto)', true
         );
         $pricePrefix = $isGrossInvoice ? 'Preis' : 'Nettopreis';
         $vatPrefix = $isGrossInvoice ? 'darin enthalten ' : 'zzgl. ';
-        $return = (object) [
-            'invoiceId' => $this->invoiceId,
-            'invoiceDate' => $this->invoiceDate->format('Y-m-d'),
-            'totalGramm' => $this->totalGramm,
-            'totalWeightText' => $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g',
-            'customer' => $this->customer,
-            'totalGrossPrice' => $this->totalGrossPrice,
-            'header' => LineDisplay::header($pricePrefix),
-            'body' => [],
-            'footer' => [],
-        ];
+
+        $return = new InvoiceDisplay;
+        $return->invoiceId = $this->invoiceId;
+        $return->invoiceDate = $this->invoiceDate;
+        $return->totalGramm = $this->totalGramm;
+        $g = $this->totalGramm;
+        $return->totalWeightText = $g > 1000 ? number_format($g / 1000, 1).' kg' : $g.' g';
+        $return->customer = $this->customer;
+        $return->totalGrossPrice = $this->totalGrossPrice;
+        $return->header = LineDisplay::header($pricePrefix);
+        $return->body = [];
+        $return->footer = [];
+
         if ($isGrossInvoice) {
             // endkunden
             $return->footer[] = $bruttoLine;
@@ -118,13 +119,8 @@ class Invoice
                 $this->totalNetPrice, 'Summe Netto', true
             );
         }
-        $return->header = [
-            'quantity' => 'Menge',
-            'name' => 'Position',
-            'price' => $pricePrefix.' pro Stk.',
-            'total' => $pricePrefix.' Gesamt',
-        ];
-        // fill the body
+        $return->header = LineDisplay::header($pricePrefix);
+
         foreach ($this->lineItems as $lineItem) {
             $return->body[] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
         }
