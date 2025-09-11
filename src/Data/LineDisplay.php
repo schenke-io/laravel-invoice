@@ -36,19 +36,4 @@ readonly class LineDisplay
     {
         return new self(null, $text, null, $amount->str(), $isBold, $amount->isEmpty());
     }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(): array
-    {
-        return [
-            'quantity' => $this->quantity,
-            'name' => $this->name,
-            'price' => $this->singlePrice,
-            'total' => $this->totalPrice,
-            'isBold' => $this->isBold,
-            'isEmpty' => $this->isEmpty,
-        ];
-    }
 }

@@ -88,22 +88,25 @@ class Invoice
     /**
      * data for blade templates
      *
-     * @return array<string,mixed>
      *
      * @throws VatException
      */
-    public function display(bool $isGrossInvoice): array
+    public function display(bool $isGrossInvoice): object
     {
-        $return = [];
-        $return['invoiceId'] = $this->invoiceId;
-        $return['invoiceDate'] = $this->invoiceDate->format('Y-m-d');
-        $return['totalGramm'] = $this->totalGramm;
-        $return['totalWeightText'] = $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g';
-        $return['customer'] = $this->customer->toArray();
+        $return = (object) [
+            'invoiceId' => $this->invoiceId,
+            'invoiceDate' => $this->invoiceDate->format('Y-m-d'),
+            'totalGramm' => $this->totalGramm,
+            'totalWeightText' => $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g',
+            'customer' => $this->customer,
+            'header' => [],
+            'body' => [],
+            'footer' => [],
+        ];
 
         // fill the body
         foreach ($this->lineItems as $lineItem) {
-            $return['body'][] = LineDisplay::lineItem($lineItem, $isGrossInvoice)->toArray();
+            $return->body[] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
         }
 
         $bruttoLine = LineDisplay::footerTotal(
@@ -114,16 +117,16 @@ class Invoice
             // endkunden
             $pricePrefix = 'Preis';
             $vatPrefix = 'darin enthalten ';
-            $return['footer'][] = $bruttoLine;
+            $return->footer[] = $bruttoLine;
         } else {
             // Geschäftskunden
             $pricePrefix = 'Nettopreis';
             $vatPrefix = 'zzgl. ';
-            $return['footer'][] = LineDisplay::footerTotal(
+            $return->footer[] = LineDisplay::footerTotal(
                 $this->totalNetPrice, 'Summe Netto', true
             );
         }
-        $return['header'] = [
+        $return->header = [
             'quantity' => 'Menge',
             'name' => 'Position',
             'price' => $pricePrefix.' pro Stk.',
@@ -131,14 +134,14 @@ class Invoice
         ];
         foreach ($this->vatCents as $vatId => $cents) {
             $vat = Vat::fromId($vatId);
-            $return['footer'][] = LineDisplay::footerTotal(
+            $return->footer[] = LineDisplay::footerTotal(
                 Currency::fromCents($cents),
                 $vatPrefix.$vat->name.' MwSt.',
                 false
             );
         }
         if (! $isGrossInvoice) {
-            $return['footer'][] = $bruttoLine;
+            $return->footer[] = $bruttoLine;
         }
 
         return $return;
