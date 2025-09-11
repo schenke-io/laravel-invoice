@@ -4,6 +4,8 @@ namespace SchenkeIo\Invoice\Data;
 
 final readonly class LineDisplay
 {
+    public const array COLUMNS = ['quantity', 'name', 'singlePrice', 'totalPrice'];
+
     private function __construct(
         public null|int|string $quantity,
         public string $name,
