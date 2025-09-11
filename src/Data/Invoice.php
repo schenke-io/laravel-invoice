@@ -99,6 +99,7 @@ class Invoice
             'totalGramm' => $this->totalGramm,
             'totalWeightText' => $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g',
             'customer' => $this->customer,
+            'totalGrossPrice' => $this->totalGrossPrice,
             'header' => [],
             'body' => [],
             'footer' => [],
