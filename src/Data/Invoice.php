@@ -93,6 +93,11 @@ class Invoice
      */
     public function display(bool $isGrossInvoice): object
     {
+        $bruttoLine = LineDisplay::footerTotal(
+            $this->totalGrossPrice, 'Gesamtbetrag (Brutto)', true
+        );
+        $pricePrefix = $isGrossInvoice ? 'Preis' : 'Nettopreis';
+        $vatPrefix = $isGrossInvoice ? 'darin enthalten ' : 'zzgl. ';
         $return = (object) [
             'invoiceId' => $this->invoiceId,
             'invoiceDate' => $this->invoiceDate->format('Y-m-d'),
@@ -100,29 +105,15 @@ class Invoice
             'totalWeightText' => $this->totalGramm > 1000 ? number_format($this->totalGramm / 1000, 1).' kg' : $this->totalGramm.' g',
             'customer' => $this->customer,
             'totalGrossPrice' => $this->totalGrossPrice,
-            'header' => [],
+            'header' => LineDisplay::header($pricePrefix),
             'body' => [],
             'footer' => [],
         ];
-
-        // fill the body
-        foreach ($this->lineItems as $lineItem) {
-            $return->body[] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
-        }
-
-        $bruttoLine = LineDisplay::footerTotal(
-            $this->totalGrossPrice, 'Gesamtbetrag (Brutto)', true
-        );
-
         if ($isGrossInvoice) {
             // endkunden
-            $pricePrefix = 'Preis';
-            $vatPrefix = 'darin enthalten ';
             $return->footer[] = $bruttoLine;
         } else {
             // Geschäftskunden
-            $pricePrefix = 'Nettopreis';
-            $vatPrefix = 'zzgl. ';
             $return->footer[] = LineDisplay::footerTotal(
                 $this->totalNetPrice, 'Summe Netto', true
             );
@@ -133,6 +124,11 @@ class Invoice
             'price' => $pricePrefix.' pro Stk.',
             'total' => $pricePrefix.' Gesamt',
         ];
+        // fill the body
+        foreach ($this->lineItems as $lineItem) {
+            $return->body[] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
+        }
+
         foreach ($this->vatCents as $vatId => $cents) {
             $vat = Vat::fromId($vatId);
             $return->footer[] = LineDisplay::footerTotal(

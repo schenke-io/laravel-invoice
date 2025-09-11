@@ -2,10 +2,10 @@
 
 namespace SchenkeIo\Invoice\Data;
 
-readonly class LineDisplay
+final readonly class LineDisplay
 {
     private function __construct(
-        public ?int $quantity,
+        public null|int|string $quantity,
         public string $name,
         public ?string $singlePrice,
         public string $totalPrice,
@@ -35,5 +35,16 @@ readonly class LineDisplay
     public static function footerTotal(Currency $amount, string $text, bool $isBold): self
     {
         return new self(null, $text, null, $amount->str(), $isBold, $amount->isEmpty());
+    }
+
+    public static function header(string $pricePrefix): self
+    {
+        return new self(
+            'Menge',
+            'Position',
+            $pricePrefix.' pro Stk.',
+            $pricePrefix.' Gesamt',
+            true, true
+        );
     }
 }
