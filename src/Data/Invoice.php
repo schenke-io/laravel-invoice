@@ -112,12 +112,12 @@ class Invoice
 
         if ($isGrossInvoice) {
             // endkunden
-            $pricePrefix = 'Brutto';
+            $pricePrefix = 'Preis';
             $vatPrefix = 'darin enthalten ';
             $return['footer'][] = $bruttoLine;
         } else {
             // Geschäftskunden
-            $pricePrefix = 'Netto';
+            $pricePrefix = 'Nettopreis';
             $vatPrefix = 'zzgl. ';
             $return['footer'][] = LineDisplay::footerTotal(
                 $this->totalNetPrice, 'Summe Netto', true
@@ -126,14 +126,14 @@ class Invoice
         $return['header'] = [
             'quantity' => 'Menge',
             'name' => 'Position',
-            'price' => $pricePrefix.'preis pro Stk.',
-            'total' => $pricePrefix.'preis Gesamt',
+            'price' => $pricePrefix.' pro Stk.',
+            'total' => $pricePrefix.' Gesamt',
         ];
         foreach ($this->vatCents as $vatId => $cents) {
             $vat = Vat::fromId($vatId);
             $return['footer'][] = LineDisplay::footerTotal(
                 Currency::fromCents($cents),
-                $vatPrefix.$vat->name.'MwSt.',
+                $vatPrefix.$vat->name.' MwSt.',
                 false
             );
         }
