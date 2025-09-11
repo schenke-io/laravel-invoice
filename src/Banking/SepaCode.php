@@ -7,6 +7,7 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use SchenkeIo\Invoice\Data\Invoice;
 use SepaQr\SepaQrData;
 
 class SepaCode
@@ -21,6 +22,15 @@ class SepaCode
             ->setIban($iban)
             ->setAmount($amountEuro)
             ->setRemittanceText($information);
+    }
+
+    public static function fromInvoice(
+        Invoice $invoice,
+        string $name,
+        string $iban,
+        string $infoPrefix): self
+    {
+        return new self($name, $iban, $invoice->totalGrossPrice->toFloat(), $infoPrefix.' '.$invoice->invoiceId);
     }
 
     public function dataUri(int $red = 0, int $green = 0, int $blue = 0): string

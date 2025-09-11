@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use SchenkeIo\Invoice\Banking\SepaCode;
 use SchenkeIo\Invoice\Data\Customer;
 use SchenkeIo\Invoice\Data\Invoice;
 use SchenkeIo\Invoice\Data\LineItem;
@@ -43,8 +44,10 @@ it('calculates VAT correctly', function () {
     $lineItem = LineItem::fromTotalGrossPrice(3, 'Product A', 100, $vat);
     $invoice = new Invoice('INV-123', Carbon::parse('2020-01-01'), $customer);
     $invoice->addLine($lineItem);
+    $sepa = SepaCode::fromInvoice($invoice, 'name', 'IBAN', 'BIC');
     expect($invoice->vats()['19%']->centValue)->toBe(1597)
         ->and($invoice->totalGrossPrice->centValue)->toBe(10000)
-        ->and($invoice->totalNetPrice->centValue)->toBe(8403);
+        ->and($invoice->totalNetPrice->centValue)->toBe(8403)
+        ->and($sepa->dataUri())->toBestring();
 
 });
