@@ -2,8 +2,8 @@
 
 require 'vendor/autoload.php';
 
-use SchenkeIo\Invoice\Data\Currency;
-use SchenkeIo\Invoice\Data\Invoice;
+use SchenkeIo\Invoice\Invoicing\InvoiceNumericData;
+use SchenkeIo\Invoice\Money\Currency;
 use SchenkeIo\PackagingTools\Badges\BadgeStyle;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
@@ -17,5 +17,5 @@ $mda->storeLocalBadge('', '.github/coverage.svg');
 $mda->addBadges();
 $mda->addMarkdown('introduction.md');
 $mda->addClassMarkdown(Currency::class);
-$mda->addClassMarkdown(Invoice::class);
+$mda->addClassMarkdown(InvoiceNumericData::class);
 $mda->writeMarkdown('README.md');

@@ -1,7 +1,7 @@
 <?php
 
-use SchenkeIo\Invoice\Data\Currency;
-use SchenkeIo\Invoice\Data\Vat;
+use SchenkeIo\Invoice\Money\Currency;
+use SchenkeIo\Invoice\Money\Vat;
 
 it('stores and receives data to Livewire based on Wireable', function () {
     // Test the Wireable interface implementation
