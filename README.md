@@ -46,20 +46,20 @@ Handling of:
 
 
 
-### InvoiceNumericData
+### Invoice
 
 
 
-#### Public methods of InvoiceNumericData
+#### Public methods of Invoice
 
-| method          | summary                                          |
-|-----------------|--------------------------------------------------|
-| addWeight       | -                                                |
-| addLine         | cent based calculation to avoid numeric glitches |
-| vats            | formats the VAT values in a readable format      |
-| payMe           | show pay me information                          |
-| isEmpty         | the total is zero                                |
-| invoiceViewData | data for blade templates                         |
+| method    | summary                                          |
+|-----------|--------------------------------------------------|
+| addWeight | -                                                |
+| addLine   | cent based calculation to avoid numeric glitches |
+| vats      | formats the VAT values in a readable format      |
+| payMe     | show pay me information                          |
+| isEmpty   | the total is zero                                |
+| display   | data for blade templates                         |
 
 
 

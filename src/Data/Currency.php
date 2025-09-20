@@ -1,6 +1,6 @@
 <?php
 
-namespace SchenkeIo\Invoice\Money;
+namespace SchenkeIo\Invoice\Data;
 
 use Livewire\Wireable;
 

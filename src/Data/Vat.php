@@ -1,6 +1,6 @@
 <?php
 
-namespace SchenkeIo\Invoice\Money;
+namespace SchenkeIo\Invoice\Data;
 
 use SchenkeIo\Invoice\Exceptions\VatException;
 
@@ -17,11 +17,14 @@ readonly class Vat
         $this->name = number_format($rate * 100, $decimals, ',').'%';
     }
 
+    /**
+     * @throws VatException
+     */
     public static function fromId(string $id): self
     {
         $rate = 0.001 * (int) ltrim($id, '0');
 
-        return new self($rate);
+        return self::fromRate($rate);
     }
 
     /**

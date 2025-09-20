@@ -1,6 +1,6 @@
 <?php
 
-namespace SchenkeIo\Invoice\Invoicing;
+namespace SchenkeIo\Invoice\Data;
 
 readonly class Customer
 {

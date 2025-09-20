@@ -1,15 +1,14 @@
 <?php
 
-namespace SchenkeIo\Invoice\Invoicing;
+namespace SchenkeIo\Invoice\Data;
 
 use Carbon\Carbon;
-use SchenkeIo\Invoice\Money\Currency;
-use SchenkeIo\Invoice\Money\Vat;
+use SchenkeIo\Invoice\Exceptions\VatException;
 
-class InvoiceNumericData
+class Invoice
 {
     /**
-     * @var LineData[]
+     * @var LineItem[]
      */
     protected array $lineItems = [];
 
@@ -41,7 +40,7 @@ class InvoiceNumericData
     /**
      * cent based calculation to avoid numeric glitches
      */
-    public function addLine(LineData $lineItem): void
+    public function addLine(LineItem $lineItem): void
     {
         $this->lineItems[] = $lineItem;
         $this->vatCents[$lineItem->vat->id] = $this->vatCents[$lineItem->vat->id] ?? 0;
@@ -56,6 +55,8 @@ class InvoiceNumericData
      * formats the VAT values in a readable format
      *
      * @return array<string,Currency>
+     *
+     * @throws VatException
      */
     public function vats(): array
     {
@@ -86,16 +87,18 @@ class InvoiceNumericData
 
     /**
      * data for blade templates
+     *
+     * @throws VatException
      */
-    public function invoiceViewData(bool $isGrossInvoice): InvoiceViewData
+    public function display(bool $isGrossInvoice): InvoiceDisplay
     {
-        $bruttoLine = LineViewData::footerTotal(
+        $bruttoLine = LineDisplay::footerTotal(
             $this->totalGrossPrice, 'Gesamtbetrag (Brutto)', true
         );
         $pricePrefix = $isGrossInvoice ? 'Preis' : 'Nettopreis';
         $vatPrefix = $isGrossInvoice ? 'darin enthalten ' : 'zzgl. ';
 
-        $return = new InvoiceViewData;
+        $return = new InvoiceDisplay;
         $return->invoiceId = $this->invoiceId;
         $return->invoiceDate = $this->invoiceDate;
         $return->totalGramm = $this->totalGramm;
@@ -103,7 +106,7 @@ class InvoiceNumericData
         $return->totalWeightText = $g > 1000 ? number_format($g / 1000, 1).' kg' : $g.' g';
         $return->customer = $this->customer;
         $return->totalGrossPrice = $this->totalGrossPrice;
-        $return->header = LineViewData::header($pricePrefix);
+        $return->header = LineDisplay::header($pricePrefix);
         $return->body = [];
         $return->footer = [];
 
@@ -112,19 +115,19 @@ class InvoiceNumericData
             $return->footer[] = $bruttoLine;
         } else {
             // Geschäftskunden
-            $return->footer[] = LineViewData::footerTotal(
+            $return->footer[] = LineDisplay::footerTotal(
                 $this->totalNetPrice, 'Summe Netto', true
             );
         }
-        $return->header = LineViewData::header($pricePrefix);
+        $return->header = LineDisplay::header($pricePrefix);
 
         foreach ($this->lineItems as $lineItem) {
-            $return->body[] = LineViewData::lineItem($lineItem, $isGrossInvoice);
+            $return->body[] = LineDisplay::lineItem($lineItem, $isGrossInvoice);
         }
 
         foreach ($this->vatCents as $vatId => $cents) {
             $vat = Vat::fromId($vatId);
-            $return->footer[] = LineViewData::footerTotal(
+            $return->footer[] = LineDisplay::footerTotal(
                 Currency::fromCents($cents),
                 $vatPrefix.$vat->name.' MwSt.',
                 false
