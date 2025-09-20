@@ -1,8 +1,11 @@
 <?php
 
-namespace SchenkeIo\Invoice\Data;
+namespace SchenkeIo\Invoice\Invoicing;
 
-readonly class LineItem
+use SchenkeIo\Invoice\Money\Currency;
+use SchenkeIo\Invoice\Money\Vat;
+
+readonly class LineData
 {
     public Currency $itemGrossPrice;
 
@@ -14,7 +17,11 @@ readonly class LineItem
 
     public Currency $lineVatAmount;
 
-    private function __construct(public int $quantity, public string $name, float $totalGrossPrice, public Vat $vat)
+    private function __construct(
+        public int $quantity,
+        public string $name,
+        float $totalGrossPrice,
+        public Vat $vat)
     {
         $this->lineTotalGrossPrice = Currency::fromFloat($totalGrossPrice);
         $this->lineTotalNetPrice = $this->lineTotalGrossPrice->fromGrossToNet($vat);

@@ -1,7 +1,7 @@
 <?php
 
-use SchenkeIo\Invoice\Data\Vat;
 use SchenkeIo\Invoice\Exceptions\VatException;
+use SchenkeIo\Invoice\Money\Vat;
 
 it('can convert rates to id and back', function ($rate) {
     $vat = Vat::fromRate($rate);

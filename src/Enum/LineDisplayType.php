@@ -4,8 +4,8 @@ namespace SchenkeIo\Invoice\Enum;
 
 enum LineDisplayType
 {
-    case InvoiceItem;
-    case FooterTotal;
-    case FooterVat;
+    case thead;
+    case tbody;
+    case tfoot;
 
 }

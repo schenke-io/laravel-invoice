@@ -4,7 +4,7 @@ namespace SchenkeIo\Invoice\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
-use SchenkeIo\Invoice\Data\Currency;
+use SchenkeIo\Invoice\Money\Currency;
 
 /**
  * @implements CastsAttributes<Currency,float>

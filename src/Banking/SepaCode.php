@@ -7,7 +7,7 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use SchenkeIo\Invoice\Data\Invoice;
+use SchenkeIo\Invoice\Invoicing\InvoiceNumericData;
 use SepaQr\SepaQrData;
 
 class SepaCode
@@ -25,7 +25,7 @@ class SepaCode
     }
 
     public static function fromInvoice(
-        Invoice $invoice,
+        InvoiceNumericData $invoice,
         string $name,
         string $iban,
         string $infoPrefix): self
