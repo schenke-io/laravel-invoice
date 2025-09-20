@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use SchenkeIo\Invoice\Casts\CurrencyCast;
-use SchenkeIo\Invoice\Data\Currency;
+use SchenkeIo\Invoice\Money\Currency;
 
 it('converts database value to Currency object', function ($value, $result) {
     // Anonymous Dummy model to mimic a database-backed Eloquent model with a casted attribute.
