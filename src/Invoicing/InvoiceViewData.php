@@ -16,13 +16,12 @@ class InvoiceViewData
     private array $defaults = [
         'table-class' => 'table-invoice',
         'invoice-row-thead' => '',
-        'invoice-row-empty-thead' => '',
         'invoice-row-tbody' => '',
-        'invoice-row-empty-tbody' => '',
         'invoice-row-tfoot' => '',
-        'invoice-row-empty-tfoot' => 'empty-line',
+        'invoice-row-empty' => 'empty-line',
         'invoice-cell-right' => 'cell-right',
         'invoice-cell-left' => 'cell-left',
+        'invoice-cell-bold' => 'cell-bold',
     ];
 
     public string $invoiceId = '';

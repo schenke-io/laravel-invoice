@@ -22,8 +22,8 @@ final readonly class LineViewData
         public ?string $singlePrice,
         public string $totalPrice,
         // design elements
-        public bool $isBold,
-        public bool $isEmpty
+        public bool $isBold = false,
+        public bool $isEmpty = false
     ) {}
 
     public static function lineItem(LineData $lineItem, bool $isGross = true): self
@@ -39,15 +39,14 @@ final readonly class LineViewData
         return new self(
             $lineItem->quantity,
             $lineItem->name,
-            $singlePrice, $totalPrice,
-            false,
-            false
+            $singlePrice,
+            $totalPrice
         );
     }
 
     public static function footerTotal(Currency $amount, string $text, bool $isBold): self
     {
-        return new self(null, $text, null, $amount->str(), $isBold, $amount->isEmpty());
+        return new self(null, $text, null, $amount->str(), $isBold);
     }
 
     public static function header(string $pricePrefix): self
@@ -57,7 +56,7 @@ final readonly class LineViewData
             'Position',
             $pricePrefix.' pro Stk.',
             $pricePrefix.' Gesamt',
-            true, false
+            true
         );
     }
 
@@ -72,13 +71,19 @@ final readonly class LineViewData
     public function html(array $config, LineDisplayType $type): string
     {
         $return = '    <tr class="';
-        $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        $return .= $config['invoice-row-'.($this->isEmpty ? 'empty-' : '').$type->name];
+        $return .= $config['invoice-row-'.$type->name];
+        if ($this->isEmpty) {
+            $return .= ' '.$config['invoice-row-empty'];
+        }
         $return .= "\">\n";
+        $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
         foreach (self::COLUMNS as $key => $alignRight) {
             $return .= "      <$cellType";
             $return .= ' class="';
             $return .= $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'];
+            if ($this->isBold) {
+                $return .= ' '.$config['invoice-cell-bold'];
+            }
             $return .= '">'.$this->{$key}."</$cellType>\n";
         }
         $return .= "    </tr>\n";
