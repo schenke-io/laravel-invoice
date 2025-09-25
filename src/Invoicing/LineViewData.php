@@ -69,9 +69,10 @@ final readonly class LineViewData
      */
     public function html(array $config, LineDisplayType $type): string
     {
+        $empty = is_null($this->quantity);
         $return = '    <tr class="';
         $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        $return .= $config['invoice-row-'.($this->isEmpty ? 'empty-' : '').$type->name];
+        $return .= $config['invoice-row-'.($empty ? 'empty-' : '').$type->name];
         $return .= "\">\n";
         foreach (self::COLUMNS as $key => $alignRight) {
             $return .= "      <$cellType";
