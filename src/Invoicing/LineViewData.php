@@ -21,7 +21,8 @@ final readonly class LineViewData
         public string $name,
         public ?string $singlePrice,
         public string $totalPrice,
-        public bool $isBold
+        public bool $isBold,
+        public bool $isEmpty
     ) {}
 
     public static function lineItem(LineData $lineItem, bool $isGross = true): self
@@ -39,13 +40,14 @@ final readonly class LineViewData
             $lineItem->name,
             $singlePrice,
             $totalPrice,
-            false
+            false,
+            $lineItem->lineTotalGrossPrice->isEmpty()
         );
     }
 
     public static function footerTotal(Currency $amount, string $text, bool $isBold): self
     {
-        return new self(null, $text, null, $amount->str(), $isBold);
+        return new self(null, $text, null, $amount->str(), $isBold, false);
     }
 
     public static function header(string $pricePrefix): self
@@ -55,7 +57,8 @@ final readonly class LineViewData
             'Position',
             $pricePrefix.' pro Stk.',
             $pricePrefix.' Gesamt',
-            true
+            true,
+            false
         );
     }
 
