@@ -18,15 +18,13 @@ final readonly class LineViewData
     private function __construct(
         // financial elements
         public null|int|string $quantity,
-        public string          $name,
-        public ?string         $singlePrice,
-        public string          $totalPrice,
+        public string $name,
+        public ?string $singlePrice,
+        public string $totalPrice,
         // design elements
-        public bool            $isBold,
-        public bool            $isEmpty
-    )
-    {
-    }
+        public bool $isBold,
+        public bool $isEmpty
+    ) {}
 
     public static function lineItem(LineData $lineItem, bool $isGross = true): self
     {
@@ -57,8 +55,8 @@ final readonly class LineViewData
         return new self(
             'Menge',
             'Position',
-            $pricePrefix . ' pro Stk.',
-            $pricePrefix . ' Gesamt',
+            $pricePrefix.' pro Stk.',
+            $pricePrefix.' Gesamt',
             true, false
         );
     }
@@ -69,19 +67,19 @@ final readonly class LineViewData
     }
 
     /**
-     * @param array<string,string> $config
+     * @param  array<string,string>  $config
      */
     public function html(array $config, LineDisplayType $type): string
     {
         $return = '    <tr class="';
         $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        $return .= $config['invoice-row-' . ($this->isEmpty ? 'empty-' : '') . $type->name];
+        $return .= $config['invoice-row-'.($this->isEmpty ? 'empty-' : '').$type->name];
         $return .= "\">\n";
         foreach (self::COLUMNS as $key => $alignRight) {
             $return .= "      <$cellType";
             $return .= ' class="';
             $return .= $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'];
-            $return .= '">' . $this->{$key} . "</$cellType>\n";
+            $return .= '">'.$this->{$key}."</$cellType>\n";
         }
         $return .= "    </tr>\n";
 
