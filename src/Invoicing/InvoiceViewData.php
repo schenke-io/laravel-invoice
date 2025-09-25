@@ -69,7 +69,7 @@ class InvoiceViewData
         $html .= "  </tbody>\n  <tfoot>\n";
         // this can be styled a line separating all items from the summary
         $html .= sprintf("    <tr class='%s'><td colspan='%d'></td></tr>\n",
-            $config['invoice-row-empty'],
+            $finalConfig['invoice-row-empty'],
             count(LineViewData::COLUMNS),
         );
         foreach ($this->footer as $line) {
