@@ -21,9 +21,7 @@ final readonly class LineViewData
         public string $name,
         public ?string $singlePrice,
         public string $totalPrice,
-        // design elements
-        public bool $isBold = false,
-        public bool $isEmpty = false
+        public bool $isBold
     ) {}
 
     public static function lineItem(LineData $lineItem, bool $isGross = true): self
@@ -40,7 +38,8 @@ final readonly class LineViewData
             $lineItem->quantity,
             $lineItem->name,
             $singlePrice,
-            $totalPrice
+            $totalPrice,
+            false
         );
     }
 
@@ -60,11 +59,6 @@ final readonly class LineViewData
         );
     }
 
-    public static function emptyLine(): self
-    {
-        return new self(null, '', null, '', false, true);
-    }
-
     /**
      * @param  array<string,string>  $config
      */
@@ -72,9 +66,6 @@ final readonly class LineViewData
     {
         $return = '    <tr class="';
         $return .= $config['invoice-row-'.$type->name];
-        if ($this->isEmpty) {
-            $return .= ' '.$config['invoice-row-empty'];
-        }
         $return .= "\">\n";
         $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
         foreach (self::COLUMNS as $key => $alignRight) {

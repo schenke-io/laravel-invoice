@@ -38,7 +38,7 @@ it('can generate an invoice', function () {
         ->and($invoice->isEmpty())->toBeFalse()
         ->and($invoiceViewDataGross)->toBeObject()
         ->and($invoiceViewDataNet->html())->toBeString()
-        ->and(strlen(json_encode($invoiceViewDataGross)))->toBe(1288);
+        ->and(strlen(json_encode($invoiceViewDataGross)))->toBe(1160);
 
 });
 
