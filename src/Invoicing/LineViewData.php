@@ -3,10 +3,9 @@
 namespace SchenkeIo\Invoice\Invoicing;
 
 use SchenkeIo\Invoice\Contracts\InvoiceLineView;
-use SchenkeIo\Invoice\Enum\LineDisplayType;
 use SchenkeIo\Invoice\Money\Currency;
 
-final readonly class LineViewData implements InvoiceLineView
+final readonly class LineViewData extends LineViewBase implements InvoiceLineView
 {
     private function __construct(
         // financial elements
@@ -14,9 +13,11 @@ final readonly class LineViewData implements InvoiceLineView
         public string $name,
         public ?string $singlePrice,
         public string $totalPrice,
-        public bool $isBold,
+        bool $isBold,
         public bool $isEmpty
-    ) {}
+    ) {
+        parent::__construct($isBold);
+    }
 
     public static function lineItem(LineData $lineItem, bool $isGross = true): self
     {
@@ -69,28 +70,5 @@ final readonly class LineViewData implements InvoiceLineView
             'singlePrice' => true,
             'totalPrice' => true,
         ];
-    }
-
-    /**
-     * @param  array<string,string>  $config
-     */
-    public function html(array $config, LineDisplayType $type): string
-    {
-        $return = '    <tr class="';
-        $return .= $config['invoice-row-'.$type->name];
-        $return .= "\">\n";
-        $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        foreach ($this->columns() as $key => $alignRight) {
-            $return .= "      <$cellType";
-            $return .= ' class="';
-            $return .= $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'];
-            if ($this->isBold) {
-                $return .= ' '.$config['invoice-cell-bold'];
-            }
-            $return .= '">'.$this->{$key}."</$cellType>\n";
-        }
-        $return .= "    </tr>\n";
-
-        return $return;
     }
 }
