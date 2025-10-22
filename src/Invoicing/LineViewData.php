@@ -2,19 +2,12 @@
 
 namespace SchenkeIo\Invoice\Invoicing;
 
+use SchenkeIo\Invoice\Contracts\InvoiceLineView;
 use SchenkeIo\Invoice\Enum\LineDisplayType;
 use SchenkeIo\Invoice\Money\Currency;
 
-final readonly class LineViewData
+final readonly class LineViewData implements InvoiceLineView
 {
-    public const array COLUMNS = [
-        // key => align right
-        'quantity' => false,
-        'name' => false,
-        'singlePrice' => true,
-        'totalPrice' => true,
-    ];
-
     private function __construct(
         // financial elements
         public null|int|string $quantity,
@@ -63,6 +56,22 @@ final readonly class LineViewData
     }
 
     /**
+     * key and custom definitions per column
+     *
+     * @return array<string,mixed>
+     */
+    public function columns(): array
+    {
+        return [
+            // key => align right
+            'quantity' => false,
+            'name' => false,
+            'singlePrice' => true,
+            'totalPrice' => true,
+        ];
+    }
+
+    /**
      * @param  array<string,string>  $config
      */
     public function html(array $config, LineDisplayType $type): string
@@ -71,7 +80,7 @@ final readonly class LineViewData
         $return .= $config['invoice-row-'.$type->name];
         $return .= "\">\n";
         $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        foreach (self::COLUMNS as $key => $alignRight) {
+        foreach ($this->columns() as $key => $alignRight) {
             $return .= "      <$cellType";
             $return .= ' class="';
             $return .= $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'];

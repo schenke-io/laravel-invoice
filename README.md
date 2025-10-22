@@ -52,14 +52,25 @@ Handling of:
 
 #### Public methods of InvoiceNumericData
 
-| method          | summary                                          |
-|-----------------|--------------------------------------------------|
-| addWeight       | -                                                |
-| addLine         | cent based calculation to avoid numeric glitches |
-| vats            | formats the VAT values in a readable format      |
-| payMe           | show pay me information                          |
-| isEmpty         | the total is zero                                |
-| invoiceViewData | data for blade templates                         |
+| method          | summary                                                 |
+|-----------------|---------------------------------------------------------|
+| addWeight       | take the weight in grams and add it to the total weight |
+| addLine         | cent based calculation to avoid numeric glitches        |
+| vats            | formats the VAT values in a readable format             |
+| payMe           | show pay me information                                 |
+| isEmpty         | the total is zero                                       |
+| invoiceViewData | data for blade templates                                |
+
+
+
+# Custom invoice 
+
+To build a custom invoice you first generate a class which extends
+`SchenkeIo\Invoice\Contracts\InvoiceLineView`. This class should define the columns
+and must be able to generate HTML for any `LineDisplayType` 
+using the config values from `InvoiceViewData`.
+
+Then you start a new instance of `InvoiceViewData` and fill its public data.
 
 
 

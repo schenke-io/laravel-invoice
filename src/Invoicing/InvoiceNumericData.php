@@ -33,6 +33,9 @@ class InvoiceNumericData
         $this->totalNetPrice = Currency::fromCents(0);
     }
 
+    /**
+     * take the weight in grams and add it to the total weight
+     */
     public function addWeight(int $gramm): void
     {
         $this->totalGramm += $gramm;

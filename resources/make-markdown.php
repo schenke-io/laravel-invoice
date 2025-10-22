@@ -18,4 +18,5 @@ $mda->addBadges();
 $mda->addMarkdown('introduction.md');
 $mda->addClassMarkdown(Currency::class);
 $mda->addClassMarkdown(InvoiceNumericData::class);
+$mda->addMarkdown('custom-invoice.md');
 $mda->writeMarkdown('README.md');

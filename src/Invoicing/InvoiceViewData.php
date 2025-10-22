@@ -3,6 +3,7 @@
 namespace SchenkeIo\Invoice\Invoicing;
 
 use Carbon\Carbon;
+use SchenkeIo\Invoice\Contracts\InvoiceLineView;
 use SchenkeIo\Invoice\Enum\LineDisplayType;
 use SchenkeIo\Invoice\Money\Currency;
 
@@ -36,15 +37,15 @@ class InvoiceViewData
 
     public Currency $totalGrossPrice;
 
-    public LineViewData $header;
+    public InvoiceLineView $header;
 
     /**
-     * @var LineViewData[]
+     * @var InvoiceLineView[]
      */
     public array $body = [];
 
     /**
-     * @var LineViewData[]
+     * @var InvoiceLineView[]
      */
     public array $footer = [];
 
@@ -70,7 +71,7 @@ class InvoiceViewData
         // this can be styled a line separating all items from the summary
         $html .= sprintf("    <tr class='%s'><td colspan='%d'></td></tr>\n",
             $finalConfig['invoice-row-empty'],
-            count(LineViewData::COLUMNS),
+            count($this->header->columns()),
         );
         foreach ($this->footer as $line) {
             $html .= $line->html($finalConfig, LineDisplayType::tfoot);
