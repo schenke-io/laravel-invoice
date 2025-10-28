@@ -29,4 +29,16 @@ class CurrencyCast implements CastsAttributes
     {
         return Currency::fromAny($value)->toFloat();
     }
+
+    /**
+     * Get the value that should be serialized.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    public function serialize(Model $model, string $key, mixed $value, array $attributes): string
+    {
+        $currency = Currency::fromAny($value);
+
+        return "$currency";
+    }
 }

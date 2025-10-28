@@ -60,3 +60,31 @@ it('converts Currency object to float', function ($value, $result) {
     '0' => [0, 0.0],
     '12,34 Euro' => ['12,34 Euro', 12.34],
 ]);
+
+it('can serialize Currency object', function ($input, $result) {
+    // Anonymous Dummy model to test serialization of casted attribute
+    $dummy = new class extends Model
+    {
+        protected $table = 'dummies';
+
+        protected $guarded = [];
+
+        protected $casts = [
+            'amount' => CurrencyCast::class,
+        ];
+    };
+
+    // Set attribute (this may be raw number, string, or Currency instance)
+    $dummy->setAttribute('amount', $input);
+
+    // When converting model to array/json, the cast's serialize() should be used
+    $serialized = $dummy->toArray()['amount'] ?? null;
+
+    expect($serialized)->toBe($result);
+})->with([
+    'null to "0"' => [null, '0,00'],
+    'int to string' => [0, '0,00'],
+    'float rounded' => [123.4567, '123,46'],
+    'currency instance' => [Currency::fromFloat(123), '123,00'],
+    'string with euro' => ['12,34 Euro', '12,34'],
+]);
