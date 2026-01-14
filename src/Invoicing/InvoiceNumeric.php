@@ -80,7 +80,7 @@ class InvoiceNumeric
      * rendered. It handles the grouping of lines into header,
      * body, and footer sections.
      *
-     * @param bool $isGrossInvoice Whether the invoice should display gross or net prices.
+     * @param  bool  $isGrossInvoice  Whether the invoice should display gross or net prices.
      */
     public function invoiceTableView(bool $isGrossInvoice): InvoiceTableView
     {
@@ -149,9 +149,9 @@ class InvoiceNumeric
      * If there are multiple VAT categories, it prepares a VatTableView for
      * detailed breakdown and returns the prefix with the table's HTML.
      *
-     * @param InvoiceTableView $view The DTO being populated.
-     * @param string $vatPrefix The prefix text for the VAT section (e.g., "incl. " or "plus ").
-     * @param bool $isGrossInvoice Whether we are rendering a gross or net invoice.
+     * @param  InvoiceTableView  $view  The DTO being populated.
+     * @param  string  $vatPrefix  The prefix text for the VAT section (e.g., "incl. " or "plus ").
+     * @param  bool  $isGrossInvoice  Whether we are rendering a gross or net invoice.
      */
     private function calculateVatSection(InvoiceTableView $view, string $vatPrefix, bool $isGrossInvoice): string
     {

@@ -2,7 +2,7 @@
 
 A robust and flexible PHP package for Laravel that simplifies invoice management, currency handling, and complex VAT calculations.
 
-![](./../illustration.png)
+![](workbench/resources/illustration.png)
 
 ### Key Benefits
 

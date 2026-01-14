@@ -88,7 +88,7 @@ abstract class TableView
      * Otherwise, it builds the HTML string by iterating through header,
      * body, and footer lines.
      *
-     * @param array<string,string|null> $config Optional configuration overrides.
+     * @param  array<string,string|null>  $config  Optional configuration overrides.
      */
     public function html(array $config = []): string
     {
@@ -118,7 +118,7 @@ abstract class TableView
      * only include keys that exist in the defaults. Values from the
      * valid user config will then overwrite the defaults.
      *
-     * @param array<string,string|null> $config User-provided configuration.
+     * @param  array<string,string|null>  $config  User-provided configuration.
      * @return array<string,string|null> The merged and filtered configuration.
      */
     protected function buildConfig(array $config): array

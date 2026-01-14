@@ -15,7 +15,7 @@ Do not edit manually as it will be overwritten.
 
 A robust and flexible PHP package for Laravel that simplifies invoice management, currency handling, and complex VAT calculations.
 
-![](./../illustration.png)
+![](workbench/resources/illustration.png)
 
 ### Key Benefits
 
@@ -166,15 +166,15 @@ Main class for managing invoice data and calculations.
 
 #### Public methods of InvoiceNumeric
 
-| method             | summary                                                 |
-|--------------------|---------------------------------------------------------|
-| getTotalGrossPrice | -                                                       |
-| getTotalNetPrice   | -                                                       |
-| addWeight          | take the weight in grams and add it to the total weight |
-| addLine            | add the lines with automatic positions                  |
-| payMe              | show pay me information                                 |
-| isEmpty            | the total is zero                                       |
-| invoiceTableView   | data for blade templates                                |
+| method             | summary                                                  |
+|--------------------|----------------------------------------------------------|
+| getTotalGrossPrice | -                                                        |
+| getTotalNetPrice   | -                                                        |
+| addWeight          | take the weight in grams and add it to the total weight  |
+| addLine            | add the lines with automatic positions                   |
+| payMe              | show pay me information                                  |
+| isEmpty            | the total is zero                                        |
+| invoiceTableView   | Prepare data for a Blade template or raw HTML rendering. |
 
 
 
