@@ -6,6 +6,7 @@
         "php": "^8.3",
         "archtechx/enums": "^v1.1",
         "illuminate/contracts": "^12.0",
+        "illuminate/console": "^12.0",
         "illuminate/http": "^12.0",
         "illuminate/routing": "^12.0",
         "illuminate/support": "^12.0",
@@ -20,7 +21,9 @@
         "phpstan/phpstan-phpunit": "^1.0",
         "schenke-io/packaging-tools": "^0.0",
         "pestphp/pest": "^3.8",
-        "laravel/pint": "^1.24"
+        "laravel/pint": "^1.24",
+        "orchestra/testbench": "^10.0",
+        "orchestra/workbench": "^2.0"
     },
     "extra": {
         "laravel": {
@@ -36,7 +39,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Workbench\\": "workbench/"
         }
     },
     "scripts": {
@@ -45,7 +49,8 @@
         "stable": "composer update --prefer-stable --prefer-dist",
         "analyse": "vendor/bin/phpstan analyse",
         "coverage": "vendor/bin/pest --coverage",
-        "markdown": "php resources/make-markdown.php",
+        "verify": "Workbench\\Console\\VatCheck::run",
+        "markdown": "Workbench\\Console\\MarkdownGenerator::run",
         "pint": "vendor/bin/pint",
         "test": "vendor/bin/pest",
         "menu": "SchenkeIo\\PackagingTools\\DeveloperMenu::handle",

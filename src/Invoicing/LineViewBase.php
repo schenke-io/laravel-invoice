@@ -2,33 +2,48 @@
 
 namespace SchenkeIo\Invoice\Invoicing;
 
-use SchenkeIo\Invoice\Contracts\InvoiceLineView;
+use SchenkeIo\Invoice\Contracts\LineViewInterface;
 use SchenkeIo\Invoice\Enum\LineDisplayType;
 
-abstract readonly class LineViewBase implements InvoiceLineView
+/**
+ * Base class for rendering invoice lines as HTML.
+ *
+ * This abstract class provides the common logic for generating HTML table
+ * rows for different sections of an invoice (header, body, footer),
+ * using configuration for CSS classes and alignment.
+ */
+abstract readonly class LineViewBase implements LineViewInterface
 {
     public function __construct(public bool $isBold) {}
 
     /**
-     * @param  array<string,string>  $config
+     * @param  array<string,string|null>  $config
      */
     public function html(array $config, LineDisplayType $type): string
     {
-        $return = '    <tr class="';
-        $return .= $config['invoice-row-'.$type->name];
-        $return .= "\">\n";
+        $rowClass = $config['invoice-row-'.$type->name] ?? '';
         $cellType = $type == LineDisplayType::thead ? 'th' : 'td';
-        foreach ($this->columns() as $key => $alignRight) {
-            $return .= "      <$cellType";
-            $return .= ' class="';
-            $return .= $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'];
-            if ($this->isBold) {
-                $return .= ' '.$config['invoice-cell-bold'];
-            }
-            $return .= '">'.$this->{$key}."</$cellType>\n";
-        }
-        $return .= "    </tr>\n";
+        $boldClass = $this->isBold ? ($config['invoice-cell-bold'] ?? '') : '';
 
-        return $return;
+        $cellsHtml = '';
+        foreach ($this->columns() as $key => $alignRight) {
+            $alignClass = $config[$alignRight ? 'invoice-cell-right' : 'invoice-cell-left'] ?? '';
+            $classAttr = trim("$alignClass $boldClass");
+            $classAttr = $classAttr ? " class=\"$classAttr\"" : '';
+
+            $cellsHtml .= sprintf(
+                "      <%s%s>%s</%s>\n",
+                $cellType,
+                $classAttr,
+                $this->{$key},
+                $cellType
+            );
+        }
+
+        return sprintf(
+            "    <tr class=\"%s\">\n%s    </tr>\n",
+            (string) $rowClass,
+            $cellsHtml
+        );
     }
 }

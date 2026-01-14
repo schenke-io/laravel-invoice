@@ -7,9 +7,16 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use SchenkeIo\Invoice\Invoicing\InvoiceNumericData;
+use SchenkeIo\Invoice\Invoicing\InvoiceNumeric;
 use SepaQr\SepaQrData;
 
+/**
+ * Generator for SEPA QR codes (BezahlCode).
+ *
+ * This class facilitates the creation of SEPA-compliant QR codes for
+ * bank transfers. It takes payment details like name, IBAN, and amount,
+ * and generates a data URI for the QR code image.
+ */
 class SepaCode
 {
     protected SepaQrData $paymentData;
@@ -25,12 +32,12 @@ class SepaCode
     }
 
     public static function fromInvoice(
-        InvoiceNumericData $invoice,
+        InvoiceNumeric $invoice,
         string $name,
         string $iban,
         string $infoPrefix): self
     {
-        return new self($name, $iban, $invoice->totalGrossPrice->toFloat(), $infoPrefix.' '.$invoice->invoiceId);
+        return new self($name, $iban, $invoice->getTotalGrossPrice()->toFloat(), $infoPrefix.' '.$invoice->invoiceId);
     }
 
     public function dataUri(int $red = 0, int $green = 0, int $blue = 0): string

@@ -4,15 +4,20 @@ namespace SchenkeIo\Invoice\Money;
 
 use Livewire\Wireable;
 
-final readonly class Currency implements Wireable
+/**
+ * Value object representing a monetary currency.
+ *
+ * This class handles all currency-related calculations using an internal
+ * integer representation (cents) to avoid floating-point errors. It
+ * provides methods for arithmetic operations and VAT-based conversions.
+ */
+final class Currency implements Wireable
 {
-    public int $centValue;
+    public readonly int $centValue;
 
-    public function __construct(float $value)
+    public function __construct(int $cents)
     {
-        // Convert the float value to cents by multiplying by 100 and rounding to the nearest integer.
-        // This robustly handles floating-point precision issues.
-        $this->centValue = (int) round((float) $value * 100);
+        $this->centValue = $cents;
     }
 
     /**
@@ -25,8 +30,12 @@ final readonly class Currency implements Wireable
             return new self(0);
         }
 
-        if (is_int($value) || is_float($value)) {
-            return new self((float) $value);
+        if (is_int($value)) {
+            return new self($value * 100);
+        }
+
+        if (is_float($value)) {
+            return self::fromFloat($value);
         }
 
         // Cast everything else to string and strip non-digit/decimal/separator chars
@@ -47,7 +56,7 @@ final readonly class Currency implements Wireable
             $clean = str_replace(',', '.', $clean);
         }
 
-        return new self((float) $clean);
+        return self::fromFloat((float) $clean);
     }
 
     /**
@@ -55,7 +64,7 @@ final readonly class Currency implements Wireable
      */
     public static function fromFloat(?float $value): self
     {
-        return new self($value ?? 0);
+        return new self((int) round(($value ?? 0.0) * 100));
     }
 
     /**
@@ -63,7 +72,7 @@ final readonly class Currency implements Wireable
      */
     public static function fromCents(int $cents): self
     {
-        return new self(0.01 * $cents);
+        return new self($cents);
     }
 
     /**
@@ -72,9 +81,8 @@ final readonly class Currency implements Wireable
     public function vatFromGross(Vat $vat): self
     {
         // The formula is: VAT = Gross * (Rate / (1 + Rate))
-        $factor = $vat->rate / (1 + $vat->rate);
-
-        return $this->times($factor);
+        // To maximize precision, we use centValue and multiply by Rate, then divide by (1 + Rate)
+        return new self((int) round($this->centValue * $vat->rate / (1 + $vat->rate)));
     }
 
     /**
@@ -92,9 +100,7 @@ final readonly class Currency implements Wireable
     public function fromGrossToNet(Vat $vat): self
     {
         // The formula is: Net = Gross / (1 + Rate)
-        $factor = 1 / (1 + $vat->rate);
-
-        return $this->times($factor);
+        return new self((int) round($this->centValue / (1 + $vat->rate)));
     }
 
     /**
@@ -103,9 +109,7 @@ final readonly class Currency implements Wireable
     public function fromNetToGross(Vat $vat): self
     {
         // The formula is: Gross = Net * (1 + Rate)
-        $factor = 1 + $vat->rate;
-
-        return $this->times($factor);
+        return $this->times(1 + $vat->rate);
     }
 
     /**
@@ -137,7 +141,7 @@ final readonly class Currency implements Wireable
      */
     public function plus(Currency $add): self
     {
-        return new self($this->toFloat() + $add->toFloat());
+        return self::fromCents($this->centValue + $add->centValue);
     }
 
     /**
@@ -145,7 +149,7 @@ final readonly class Currency implements Wireable
      */
     public function minus(Currency $sub): self
     {
-        return new self($this->toFloat() - $sub->toFloat());
+        return self::fromCents($this->centValue - $sub->centValue);
     }
 
     /**
@@ -153,7 +157,7 @@ final readonly class Currency implements Wireable
      */
     public function times(float $factor): self
     {
-        return new self($this->toFloat() * $factor);
+        return self::fromCents((int) round($this->centValue * $factor));
     }
 
     /**
@@ -173,7 +177,7 @@ final readonly class Currency implements Wireable
      */
     public static function fromLivewire($value): self
     {
-        return new self($value['centValue'] / 100);
+        return self::fromCents($value['centValue']);
     }
 
     /**

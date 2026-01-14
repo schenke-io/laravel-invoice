@@ -12,6 +12,7 @@
 */
 
 pest()->extend(\Tests\TestCase::class)->in('Feature');
+pest()->extend(\PHPUnit\Framework\TestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------

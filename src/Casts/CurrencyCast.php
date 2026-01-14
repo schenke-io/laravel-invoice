@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use SchenkeIo\Invoice\Money\Currency;
 
 /**
+ * Eloquent custom cast for the Currency value object.
+ *
+ * This class allows Laravel models to automatically cast database values
+ * (typically floats) into Currency value objects and vice-versa, ensuring
+ * type safety and consistent monetary calculations within the model.
+ *
  * @implements CastsAttributes<Currency,float>
  */
 class CurrencyCast implements CastsAttributes

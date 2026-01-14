@@ -5,9 +5,7 @@ use Spatie\LaravelPackageTools\Package;
 
 it('verifies the service provider', function () {
     $package = new Package;
-    $provider = new InvoiceServiceProvider(null);
-    $provider->boot();
-    $provider->register();
+    $provider = new InvoiceServiceProvider(app());
     $provider->configurePackage($package);
     expect($package->name)->toBe('invoice');
 });

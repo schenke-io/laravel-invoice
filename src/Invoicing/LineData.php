@@ -2,15 +2,19 @@
 
 namespace SchenkeIo\Invoice\Invoicing;
 
+use SchenkeIo\Invoice\Enum\InvoiceLineType;
 use SchenkeIo\Invoice\Money\Currency;
 use SchenkeIo\Invoice\Money\Vat;
 
+/**
+ * Representation of a single line item on an invoice.
+ *
+ * This class stores the details of an individual invoice line, including
+ * its name, price (gross/net), and type. It automatically calculates
+ * the corresponding tax amounts based on the provided prices and type.
+ */
 readonly class LineData
 {
-    public Currency $itemGrossPrice;
-
-    public Currency $itemNetPrice;
-
     public Currency $lineTotalGrossPrice;
 
     public Currency $lineTotalNetPrice;
@@ -18,37 +22,34 @@ readonly class LineData
     public Currency $lineVatAmount;
 
     private function __construct(
-        public int $quantity,
         public string $name,
         float $totalGrossPrice,
-        public Vat $vat)
+        public InvoiceLineType $invoiceLineType)
     {
+        $vat = Vat::de()->getVat($this->invoiceLineType->vatRate());
         $this->lineTotalGrossPrice = Currency::fromFloat($totalGrossPrice);
         $this->lineTotalNetPrice = $this->lineTotalGrossPrice->fromGrossToNet($vat);
-        $this->itemGrossPrice = Currency::fromFloat($totalGrossPrice / $quantity);
-        $this->itemNetPrice = $this->itemGrossPrice->fromGrossToNet($vat);
-        $this->lineVatAmount = Currency::fromCents($this->lineTotalGrossPrice->centValue - $this->lineTotalNetPrice->centValue);
+
+        $this->lineVatAmount = self::calculateVatAmount($this->lineTotalGrossPrice, $this->lineTotalNetPrice);
     }
 
-    public static function fromTotalGrossPrice(int $quantity, string $name, float $totalGrossPrice, Vat $vat): self
+    protected static function calculateVatAmount(Currency $gross, Currency $net): Currency
     {
-        return new self($quantity, $name, $totalGrossPrice, $vat);
+        return Currency::fromCents($gross->centValue - $net->centValue);
     }
 
-    public static function fromTotalNetPrice(int $quantity, string $name, float $totalNetPrice, Vat $vat): self
+    public static function fromTotalGrossPrice(string $name, float $totalGrossPrice, InvoiceLineType $invoiceLineType): self
     {
-        return new self($quantity, $name,
+        return new self($name, $totalGrossPrice, $invoiceLineType);
+    }
+
+    public static function fromTotalNetPrice(string $name, float $totalNetPrice, InvoiceLineType $invoiceLineType): self
+    {
+        $vat = Vat::de()->getVat($invoiceLineType->vatRate());
+
+        return new self($name,
             Currency::fromFloat($totalNetPrice)->fromNetToGross($vat)->toFloat(),
-            $vat);
-    }
-
-    public static function fromItemGrossPrice(int $quantity, string $name, float $grossItemPrice, Vat $vat): self
-    {
-        return self::fromTotalGrossPrice($quantity, $name, $grossItemPrice * $quantity, $vat);
-    }
-
-    public static function fromItemNetPrice(int $quantity, string $name, float $netItemPrice, Vat $vat): self
-    {
-        return self::fromTotalNetPrice($quantity, $name, $netItemPrice * $quantity, $vat);
+            $invoiceLineType
+        );
     }
 }

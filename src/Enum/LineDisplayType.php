@@ -2,6 +2,12 @@
 
 namespace SchenkeIo\Invoice\Enum;
 
+/**
+ * Enum defining the display sections for invoice lines in a table.
+ *
+ * It corresponds to the HTML table sections: header (thead), body (tbody),
+ * and footer (tfoot), helping to organize the rendering of invoice data.
+ */
 enum LineDisplayType
 {
     case thead;
