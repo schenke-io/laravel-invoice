@@ -31,13 +31,13 @@ readonly class VatLineView extends LineViewBase implements LineViewInterface
     /**
      * @param  array<int,int>  $positions
      */
-    public static function lineItem(array $positions, VatCategory $vatCategory, Currency $gross, Currency $net, bool $isGross, ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function lineItem(array $positions, VatCategory $vatCategory, Currency $gross, Currency $net, bool $isGross, string $countryCode = 'DE', ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
     {
         return new self(
             positions: implode(',&nbsp;', $positions),
             description: $vatCategory->description($translator),
             mainAmount: $isGross ? $gross : $net,
-            vatRate: Vat::de()->getVat($vatCategory->vatRate()),
+            vatRate: Vat::country($countryCode)->getVat($vatCategory->vatRate()),
             vatAmount: $gross->minus($net)
         );
     }

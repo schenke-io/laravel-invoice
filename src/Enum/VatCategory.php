@@ -82,6 +82,14 @@ enum VatCategory: int
      */
     public function hasVat(): bool
     {
-        return $this->vatRate() != VatRate::None;
+        return ! $this->isReverseCharge() && $this->vatRate() != VatRate::None;
+    }
+
+    /**
+     * Checks if this transaction case is a reverse charge case.
+     */
+    public function isReverseCharge(): bool
+    {
+        return $this == self::ReverseChargingStandard || $this == self::ReverseChargingReduced;
     }
 }

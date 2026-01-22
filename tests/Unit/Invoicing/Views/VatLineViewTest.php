@@ -16,7 +16,7 @@ it('can create a vat line item using a translator', function () {
     $translator = \Mockery::mock(TranslationInterface::class);
     $translator->shouldReceive('translate')->andReturn('translated');
 
-    $view = VatLineView::lineItem($positions, $vatCategory, $gross, $net, true, $translator);
+    $view = VatLineView::lineItem($positions, $vatCategory, $gross, $net, true, 'DE', $translator);
 
     expect($view->positions)->toBe('1,&nbsp;2')
         ->and($view->description)->toBe('translated')

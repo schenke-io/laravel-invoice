@@ -106,8 +106,8 @@ class InvoiceNumeric
 
     private function buildHeader(InvoiceTableView $view, bool $isGrossInvoice): void
     {
-        $pricePrefix = $isGrossInvoice ? 'Preis' : 'Nettopreis';
-        $view->header = InvoiceLineView::header($pricePrefix);
+        $pricePrefix = $isGrossInvoice ? __('invoice::invoice.price') : __('invoice::invoice.net_price');
+        $view->header = InvoiceLineView::header(is_string($pricePrefix) ? $pricePrefix : '');
     }
 
     private function buildBody(InvoiceTableView $view, bool $isGrossInvoice): void
@@ -119,16 +119,24 @@ class InvoiceNumeric
 
     private function buildFooter(InvoiceTableView $view, bool $isGrossInvoice): void
     {
-        $vatPrefix = $isGrossInvoice ? 'darin enthalten ' : 'zzgl. ';
+        $vatPrefix = $isGrossInvoice ? __('invoice::invoice.contained_vat') : __('invoice::invoice.plus_vat');
+        $vatPrefix = is_string($vatPrefix) ? $vatPrefix : '';
+
+        $grossLabel = __('invoice::invoice.gross_total');
         $bruttoLine = InvoiceLineView::footerTotal(
-            $this->calculator->getTotalGrossPrice(), 'Gesamtbetrag (Brutto)', true
+            $this->calculator->getTotalGrossPrice(),
+            is_string($grossLabel) ? $grossLabel : '',
+            true
         );
 
         if ($isGrossInvoice) {
             $view->footer[] = $bruttoLine;
         } else {
+            $netLabel = __('invoice::invoice.net_total');
             $view->footer[] = InvoiceLineView::footerTotal(
-                $this->calculator->getTotalNetPrice(), 'Summe Netto', true
+                $this->calculator->getTotalNetPrice(),
+                is_string($netLabel) ? $netLabel : '',
+                true
             );
         }
 
@@ -180,7 +188,8 @@ class InvoiceNumeric
                 array_keys($lineItems), $vatCategory,
                 $categoryGrossSum[$categoryId],
                 $categoryNetSum[$categoryId],
-                $isGrossInvoice
+                $isGrossInvoice,
+                $this->customer->countryCode
             );
         }
 

@@ -24,13 +24,23 @@ readonly class LineData
     private function __construct(
         public string $name,
         float $totalGrossPrice,
-        public InvoiceLineType $invoiceLineType)
+        public InvoiceLineType $invoiceLineType,
+        public string $countryCode = 'DE')
     {
-        $vat = Vat::de()->getVat($this->invoiceLineType->vatRate());
+        $vat = Vat::country($this->countryCode)->getVat($this->invoiceLineType->vatRate());
         $this->lineTotalGrossPrice = Currency::fromFloat($totalGrossPrice);
-        $this->lineTotalNetPrice = $this->lineTotalGrossPrice->fromGrossToNet($vat);
 
-        $this->lineVatAmount = self::calculateVatAmount($this->lineTotalGrossPrice, $this->lineTotalNetPrice);
+        if ($this->invoiceLineType->vatCategory()->isReverseCharge()) {
+            /*
+             * for reverse charge the price is the net price
+             * and no VAT is added to the invoice
+             */
+            $this->lineTotalNetPrice = $this->lineTotalGrossPrice;
+            $this->lineVatAmount = Currency::fromCents(0);
+        } else {
+            $this->lineTotalNetPrice = $this->lineTotalGrossPrice->fromGrossToNet($vat);
+            $this->lineVatAmount = self::calculateVatAmount($this->lineTotalGrossPrice, $this->lineTotalNetPrice);
+        }
     }
 
     protected static function calculateVatAmount(Currency $gross, Currency $net): Currency
@@ -38,18 +48,25 @@ readonly class LineData
         return Currency::fromCents($gross->centValue - $net->centValue);
     }
 
-    public static function fromTotalGrossPrice(string $name, float $totalGrossPrice, InvoiceLineType $invoiceLineType): self
+    public static function fromTotalGrossPrice(string $name, float $totalGrossPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
-        return new self($name, $totalGrossPrice, $invoiceLineType);
+        return new self($name, $totalGrossPrice, $invoiceLineType, $countryCode);
     }
 
-    public static function fromTotalNetPrice(string $name, float $totalNetPrice, InvoiceLineType $invoiceLineType): self
+    public static function fromTotalNetPrice(string $name, float $totalNetPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
-        $vat = Vat::de()->getVat($invoiceLineType->vatRate());
+        $vat = Vat::country($countryCode)->getVat($invoiceLineType->vatRate());
+
+        if ($invoiceLineType->vatCategory()->isReverseCharge()) {
+            $grossFloat = $totalNetPrice;
+        } else {
+            $grossFloat = Currency::fromFloat($totalNetPrice)->fromNetToGross($vat)->toFloat();
+        }
 
         return new self($name,
-            Currency::fromFloat($totalNetPrice)->fromNetToGross($vat)->toFloat(),
-            $invoiceLineType
+            $grossFloat,
+            $invoiceLineType,
+            $countryCode
         );
     }
 }

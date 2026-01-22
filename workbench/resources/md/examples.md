@@ -56,10 +56,10 @@ use SchenkeIo\Invoice\Enum\InvoiceLineType;
 
 $invoice = new InvoiceNumeric('INV-002', Carbon::now(), $customer);
 
-// Standard VAT (19%)
+// Standard VAT (19% for DE)
 $invoice->addLine(LineData::fromTotalNetPrice('Laptop', 1000.00, InvoiceLineType::SalesDE));
 
-// Reduced VAT (7%)
+// Reduced VAT (7% for DE)
 $invoice->addLine(LineData::fromTotalGrossPrice('Technical Book', 10.70, InvoiceLineType::SaleBooksDE));
 
 // Non-taxable deposit
@@ -69,7 +69,32 @@ $invoice->addLine(LineData::fromTotalGrossPrice('Security Deposit', 500.00, Invo
 echo $invoice->invoiceTableView(false)->html();
 ```
 
-### 4. SEPA QR Code Integration
+### 4. Multi-Country Support
+
+The package supports VAT rates for various countries. You can specify the country code when adding lines.
+
+```php
+use SchenkeIo\Invoice\Invoicing\LineData;
+use SchenkeIo\Invoice\Enum\InvoiceLineType;
+
+// Austrian Invoice (20% Standard VAT)
+$lineAT = LineData::fromTotalNetPrice(
+    'Consulting', 
+    100.00, 
+    InvoiceLineType::SalesDE,  // Base type
+    'AT'                       // Country code
+);
+
+// French Invoice (20% Standard VAT)
+$lineFR = LineData::fromTotalNetPrice(
+    'Service', 
+    100.00, 
+    InvoiceLineType::SalesDE, 
+    'FR'
+);
+```
+
+### 5. SEPA QR Code Integration
 
 Generate a SEPA-compliant QR code for easy payments.
 

@@ -50,11 +50,8 @@ it('can access VAT via country() and static methods', function ($method, $isoCod
     expect(Vat::country($isoCode)->isoCode)->toBe($isoCode);
 })->with([
     ['de', 'DE'],
-    ['germany', 'DE'],
     ['fr', 'FR'],
-    ['france', 'FR'],
     ['ch', 'CH'],
-    ['switzerland', 'CH'],
 ]);
 
 it('handles country related exceptions', function ($input) {
@@ -62,7 +59,7 @@ it('handles country related exceptions', function ($input) {
 })->with([
     'xx',
     'de-de',
-    'germany_1',
+    'germany',
     'france!',
 ])->throws(VatException::class);
 
@@ -79,8 +76,8 @@ it('can access interface methods on country classes', function ($countryCode, $e
         ->and($country->reduced())->toBeInstanceOf(Vat::class)
         ->and($country->none())->toBeInstanceOf(Vat::class);
 })->with([
-    ['germany', 'vat-rules-rates/germany_en'],
-    ['switzerland', 'admin.ch'],
+    ['DE', 'vat-rules-rates/germany_en'],
+    ['CH', 'admin.ch'],
 ]);
 
 it('returns correct status for countries', function () {

@@ -1,6 +1,6 @@
 {
     "name": "schenke-io/laravel-invoice",
-    "description": "Currency and Invoices in Laravel",
+    "description": "A robust and flexible PHP package for Laravel that simplifies invoice management, currency handling, and complex VAT calculations.",
     "license": "MIT",
     "require": {
         "php": "^8.3",
@@ -11,7 +11,7 @@
         "illuminate/routing": "^12.0",
         "illuminate/support": "^12.0",
         "illuminate/validation": "^12.0",
-        "livewire/livewire": "^3.0",
+        "livewire/livewire": "^4.0",
         "spatie/laravel-data": "^4.0",
         "spatie/laravel-package-tools": "^1.0",
         "smhg/sepa-qr-data": "^3.0",
@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "phpstan/phpstan-phpunit": "^1.0",
-        "schenke-io/packaging-tools": "^0.0",
+        "schenke-io/packaging-tools": "^0.1",
         "pestphp/pest": "^3.8",
         "laravel/pint": "^1.24",
         "orchestra/testbench": "^10.0",

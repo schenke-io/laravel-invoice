@@ -10,49 +10,20 @@ use SchenkeIo\Invoice\Exceptions\VatException;
  *
  * This class handles VAT rate calculations and identification, allowing for
  * the creation of VAT instances based on specific rates or country-specific
- * defaults. It uses static magic methods to provide a convenient API for
- * accessing VAT configurations for various countries.
+ * defaults.
  *
- * @method static VatInterface germany()
- * @method static VatInterface france()
- * @method static VatInterface austria()
- * @method static VatInterface belgium()
- * @method static VatInterface bulgaria()
- * @method static VatInterface cyprus()
- * @method static VatInterface czechia()
- * @method static VatInterface denmark()
- * @method static VatInterface estonia()
- * @method static VatInterface greece()
- * @method static VatInterface spain()
- * @method static VatInterface finland()
- * @method static VatInterface croatia()
- * @method static VatInterface hungary()
- * @method static VatInterface ireland()
- * @method static VatInterface italy()
- * @method static VatInterface lithuania()
- * @method static VatInterface luxembourg()
- * @method static VatInterface latvia()
- * @method static VatInterface malta()
- * @method static VatInterface netherlands()
- * @method static VatInterface poland()
- * @method static VatInterface portugal()
- * @method static VatInterface romania()
- * @method static VatInterface sweden()
- * @method static VatInterface slovenia()
- * @method static VatInterface slovakia()
- * @method static VatInterface switzerland()
- * @method static VatInterface de()
- * @method static VatInterface fr()
  * @method static VatInterface at()
  * @method static VatInterface be()
  * @method static VatInterface bg()
  * @method static VatInterface cy()
  * @method static VatInterface cz()
+ * @method static VatInterface de()
  * @method static VatInterface dk()
  * @method static VatInterface ee()
  * @method static VatInterface el()
  * @method static VatInterface es()
  * @method static VatInterface fi()
+ * @method static VatInterface fr()
  * @method static VatInterface hr()
  * @method static VatInterface hu()
  * @method static VatInterface ie()
@@ -76,7 +47,7 @@ readonly class Vat
 
     public string $name;
 
-    public readonly float $rate;
+    public float $rate;
 
     public function __construct(float|string $rate)
     {
@@ -91,7 +62,7 @@ readonly class Vat
     }
 
     /**
-     * Get a country instance by its name or ISO code.
+     * Get a country instance by its ISO code.
      *
      * @throws VatException
      */
@@ -102,18 +73,13 @@ readonly class Vat
             return new Country($isoCode);
         }
 
-        // Try as a name (slug)
-        foreach (Country::DATA as $iso => $data) {
-            if (strtoupper($data['name']) === $isoCode) {
-                return new Country($iso);
-            }
-        }
-
         throw VatException::countryNotFound($isoCode);
     }
 
     /**
      * @param  array<int, mixed>  $arguments
+     *
+     * @throws VatException
      */
     public static function __callStatic(string $name, array $arguments): VatInterface
     {

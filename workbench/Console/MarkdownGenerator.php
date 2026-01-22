@@ -9,7 +9,6 @@ use SchenkeIo\Invoice\Invoicing\InvoiceNumeric;
 use SchenkeIo\Invoice\Invoicing\LineData;
 use SchenkeIo\Invoice\Money\Currency;
 use SchenkeIo\Invoice\Money\Vat;
-use SchenkeIo\PackagingTools\Badges\BadgeStyle;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
 use SchenkeIo\PackagingTools\Markdown\MarkdownAssembler;
 
@@ -17,22 +16,23 @@ class MarkdownGenerator
 {
     public function execute(): void
     {
-        MakeBadge::makePhpStanBadge('phpstan.neon')->store('.github/phpstan.svg', BadgeStyle::Flat);
-        MakeBadge::makeCoverageBadge('build/logs/clover.xml')->store('.github/coverage.svg', BadgeStyle::Flat);
+        MakeBadge::auto();
 
         $mda = new MarkdownAssembler('workbench/resources/md');
-        $mda->storeLocalBadge('', '.github/phpstan.svg');
-        $mda->storeLocalBadge('', '.github/coverage.svg');
-        $mda->addBadges();
+        $mda->autoHeader('Laravel Invoice');
+
         $mda->addMarkdown('introduction.md');
         $mda->addMarkdown('examples.md');
-        $mda->addClassMarkdown(Currency::class);
-        $mda->addClassMarkdown(Vat::class);
-        $mda->addClassMarkdown(InvoiceNumeric::class);
-        $mda->addClassMarkdown(Customer::class);
-        $mda->addClassMarkdown(LineData::class);
-        $mda->addClassMarkdown(InvoiceLineType::class);
-        $mda->addClassMarkdown(SepaCode::class);
+
+        $mda->classes()
+            ->add(Currency::class)
+            ->add(Vat::class)
+            ->add(InvoiceNumeric::class)
+            ->add(Customer::class)
+            ->add(LineData::class)
+            ->add(InvoiceLineType::class)
+            ->add(SepaCode::class);
+
         $mda->addMarkdown('custom-invoice.md');
         $mda->writeMarkdown('README.md');
     }

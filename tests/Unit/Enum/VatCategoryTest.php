@@ -25,5 +25,5 @@ it('correctly identifies if it has VAT', function () {
     expect(VatCategory::Taxable->hasVat())->toBeTrue()
         ->and(VatCategory::NonTaxableDamages->hasVat())->toBeFalse()
         ->and(VatCategory::Deposits->hasVat())->toBeFalse()
-        ->and(VatCategory::ReverseChargingStandard->hasVat())->toBeTrue();
+        ->and(VatCategory::ReverseChargingStandard->hasVat())->toBeFalse();
 });
