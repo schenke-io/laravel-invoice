@@ -11,9 +11,9 @@ use Livewire\Wireable;
  * integer representation (cents) to avoid floating-point errors. It
  * provides methods for arithmetic operations and VAT-based conversions.
  */
-final class Currency implements Wireable
+final readonly class Currency implements Wireable
 {
-    public readonly int $centValue;
+    public int $centValue;
 
     public function __construct(int $cents)
     {
@@ -162,22 +162,20 @@ final class Currency implements Wireable
 
     /**
      * exports to Livewire format
-     *
-     * @return array<string,int>
      */
-    public function toLivewire(): array
+    public function toLivewire(): float
     {
-        return ['centValue' => $this->centValue];
+        return $this->toFloat();
     }
 
     /**
      * static constructor from Livewire format
      *
-     * @param  array<string,int>  $value
+     * @param  float  $value
      */
     public static function fromLivewire($value): self
     {
-        return self::fromCents($value['centValue']);
+        return self::fromAny($value);
     }
 
     /**
