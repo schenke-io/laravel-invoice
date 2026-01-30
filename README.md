@@ -140,7 +140,8 @@ $sepa = SepaCode::fromInvoice(
     $invoice,
     'Schenke Io',
     'DE12345678901234567890',
-    'Invoice'
+    'Invoice',
+    'ABCDEFGH' // optional BIC
 );
 
 // Get a Data URI for an <img> tag
@@ -183,6 +184,22 @@ Represents a Value Added Tax (VAT) rate and provides factory methods for countri
 | fromId   | Create a VAT instance from a numeric ID (e.g. '190' for 19.0%). |
 | fromRate | Create a VAT instance from a float rate (e.g. 0.19 for 19%).    |
 
+### VatCategory
+
+Defines the high-level tax categories
+
+#### Public methods of VatCategory
+
+| method          | summary                                                   |
+|-----------------|-----------------------------------------------------------|
+| description     | German description of the category.                       |
+| vatRate         | -                                                         |
+| hasVat          | Checks if this transaction case involves VAT.             |
+| isReverseCharge | Checks if this transaction case is a reverse charge case. |
+| cases           | -                                                         |
+| from            | -                                                         |
+| tryFrom         | -                                                         |
+
 ### InvoiceNumeric
 
 Main class for managing invoice data and calculations.
@@ -191,8 +208,8 @@ Main class for managing invoice data and calculations.
 
 | method             | summary                                                  |
 |--------------------|----------------------------------------------------------|
-| getTotalGrossPrice | -                                                        |
-| getTotalNetPrice   | -                                                        |
+| getTotalGrossPrice | Get the total gross price of the invoice.                |
+| getTotalNetPrice   | Get the total net price of the invoice.                  |
 | addWeight          | take the weight in grams and add it to the total weight  |
 | addLine            | add the lines with automatic positions                   |
 | payMe              | show pay me information                                  |
@@ -210,10 +227,10 @@ Representation of a single line item on an invoice.
 
 #### Public methods of LineData
 
-| method              | summary |
-|---------------------|---------|
-| fromTotalGrossPrice | -       |
-| fromTotalNetPrice   | -       |
+| method              | summary                                        |
+|---------------------|------------------------------------------------|
+| fromTotalGrossPrice | Create a line item from its total gross price. |
+| fromTotalNetPrice   | Create a line item from its total net price.   |
 
 ### InvoiceLineType
 
@@ -229,16 +246,31 @@ Enum defining the various types of line items that can appear on an invoice.
 | from        | -                                     |
 | tryFrom     | -                                     |
 
+### InvoiceTableView
+
+Data transfer object for the complete invoice table view.
+
+
+### LineViewBase
+
+Base class for rendering invoice lines as HTML.
+
+#### Public methods of LineViewBase
+
+| method | summary                                          |
+|--------|--------------------------------------------------|
+| html   | Generate the HTML for a single invoice line row. |
+
 ### SepaCode
 
 Generator for SEPA QR codes (BezahlCode).
 
 #### Public methods of SepaCode
 
-| method      | summary |
-|-------------|---------|
-| fromInvoice | -       |
-| dataUri     | -       |
+| method      | summary                                               |
+|-------------|-------------------------------------------------------|
+| fromInvoice | Create a SEPA code instance directly from an invoice. |
+| dataUri     | Generate the QR code as a PNG data URI.               |
 
 # Custom invoice 
 

@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "phpstan/phpstan-phpunit": "^1.0",
-        "schenke-io/packaging-tools": "^0.1",
+        "schenke-io/packaging-tools": "^0.2",
         "pestphp/pest": "^3.8",
         "laravel/pint": "^1.24",
         "orchestra/testbench": "^10.0",

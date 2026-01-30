@@ -105,7 +105,8 @@ $sepa = SepaCode::fromInvoice(
     $invoice,
     'Schenke Io',
     'DE12345678901234567890',
-    'Invoice'
+    'Invoice',
+    'ABCDEFGH' // optional BIC
 );
 
 // Get a Data URI for an <img> tag

@@ -113,9 +113,23 @@ $sepa = SepaCode::fromInvoice(
     $invoice, 
     'Account Holder', 
     'DE12345678901234567890', 
-    'INV-001'
+    'INV-001',
+    'ABCDEFGH' // optional BIC
 );
 
 echo '<img src="' . $sepa->dataUri() . '" />';
+</code-snippet>
+@endverbatim
+
+#### VAT Management
+@verbatim
+<code-snippet name="VAT Rates" lang="php">
+use SchenkeIo\Invoice\Money\Vat;
+use SchenkeIo\Invoice\Enum\VatCategory;
+
+// Get VAT rate for a specific country and category
+$vat = Vat::country('DE')->getVat(VatCategory::Sales);
+echo $vat->rate; // 0.19
+echo $vat->percent(); // "19%"
 </code-snippet>
 @endverbatim

@@ -21,25 +21,40 @@ class SepaCode
 {
     protected SepaQrData $paymentData;
 
-    public function __construct(string $name, string $iban, float $amountEuro, protected string $information)
-    {
+    public function __construct(
+        string $name,
+        string $iban,
+        float $amountEuro,
+        protected string $information,
+        ?string $bic = null
+    ) {
         $amountEuro = max(0.01, $amountEuro);  // the minimum amount is 0.01 €
         $this->paymentData = (new SepaQrData)
             ->setName($name)
             ->setIban($iban)
             ->setAmount($amountEuro)
             ->setRemittanceText($information);
+        if ($bic) {
+            $this->paymentData->setBic($bic);
+        }
     }
 
+    /**
+     * Create a SEPA code instance directly from an invoice.
+     */
     public static function fromInvoice(
         InvoiceNumeric $invoice,
         string $name,
         string $iban,
-        string $infoPrefix): self
-    {
-        return new self($name, $iban, $invoice->getTotalGrossPrice()->toFloat(), $infoPrefix.' '.$invoice->invoiceId);
+        string $infoPrefix,
+        ?string $bic = null
+    ): self {
+        return new self($name, $iban, $invoice->getTotalGrossPrice()->toFloat(), $infoPrefix.' '.$invoice->invoiceId, $bic);
     }
 
+    /**
+     * Generate the QR code as a PNG data URI.
+     */
     public function dataUri(int $red = 0, int $green = 0, int $blue = 0): string
     {
         $writer = new PngWriter;

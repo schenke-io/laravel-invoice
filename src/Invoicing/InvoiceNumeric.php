@@ -30,11 +30,17 @@ class InvoiceNumeric
         $this->calculator = new InvoiceCalculator;
     }
 
+    /**
+     * Get the total gross price of the invoice.
+     */
     public function getTotalGrossPrice(): Currency
     {
         return $this->calculator->getTotalGrossPrice();
     }
 
+    /**
+     * Get the total net price of the invoice.
+     */
     public function getTotalNetPrice(): Currency
     {
         return $this->calculator->getTotalNetPrice();

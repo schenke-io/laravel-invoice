@@ -48,11 +48,17 @@ readonly class LineData
         return Currency::fromCents($gross->centValue - $net->centValue);
     }
 
+    /**
+     * Create a line item from its total gross price.
+     */
     public static function fromTotalGrossPrice(string $name, float $totalGrossPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
         return new self($name, $totalGrossPrice, $invoiceLineType, $countryCode);
     }
 
+    /**
+     * Create a line item from its total net price.
+     */
     public static function fromTotalNetPrice(string $name, float $totalNetPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
         $vat = Vat::country($countryCode)->getVat($invoiceLineType->vatRate());

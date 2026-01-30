@@ -4,9 +4,12 @@ namespace Workbench\Console;
 
 use SchenkeIo\Invoice\Banking\SepaCode;
 use SchenkeIo\Invoice\Enum\InvoiceLineType;
+use SchenkeIo\Invoice\Enum\VatCategory;
 use SchenkeIo\Invoice\Invoicing\Customer;
 use SchenkeIo\Invoice\Invoicing\InvoiceNumeric;
 use SchenkeIo\Invoice\Invoicing\LineData;
+use SchenkeIo\Invoice\Invoicing\LineViewBase;
+use SchenkeIo\Invoice\Invoicing\Views\InvoiceTableView;
 use SchenkeIo\Invoice\Money\Currency;
 use SchenkeIo\Invoice\Money\Vat;
 use SchenkeIo\PackagingTools\Badges\MakeBadge;
@@ -21,19 +24,22 @@ class MarkdownGenerator
         $mda = new MarkdownAssembler('workbench/resources/md');
         $mda->autoHeader('Laravel Invoice');
 
-        $mda->addMarkdown('introduction.md');
-        $mda->addMarkdown('examples.md');
+        $mda->addMarkdown('01-introduction.md');
+        $mda->addMarkdown('02-examples.md');
 
         $mda->classes()
             ->add(Currency::class)
             ->add(Vat::class)
+            ->add(VatCategory::class)
             ->add(InvoiceNumeric::class)
             ->add(Customer::class)
             ->add(LineData::class)
             ->add(InvoiceLineType::class)
+            ->add(InvoiceTableView::class)
+            ->add(LineViewBase::class)
             ->add(SepaCode::class);
 
-        $mda->addMarkdown('custom-invoice.md');
+        $mda->addMarkdown('03-custom-invoice.md');
         $mda->writeMarkdown('README.md');
     }
 

@@ -17,6 +17,8 @@ abstract readonly class LineViewBase implements LineViewInterface
     public function __construct(public bool $isBold) {}
 
     /**
+     * Generate the HTML for a single invoice line row.
+     *
      * @param  array<string,string|null>  $config
      */
     public function html(array $config, LineDisplayType $type): string
