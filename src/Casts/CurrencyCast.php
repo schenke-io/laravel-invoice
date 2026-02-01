@@ -21,11 +21,10 @@ class CurrencyCast implements CastsAttributes
      * Cast the given value.
      *
      * @param  array<string, mixed>  $attributes
-     * @param  float|null  $value
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): Currency
     {
-        return Currency::fromFloat($value);
+        return Currency::fromAny($value);
     }
 
     /**

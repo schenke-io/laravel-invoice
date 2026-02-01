@@ -25,6 +25,10 @@ final readonly class Currency implements Wireable
      */
     public static function fromAny(mixed $value): Currency
     {
+        if ($value instanceof self) {
+            return $value;
+        }
+
         // Normalize nulls and pure numerics early
         if ($value === null) {
             return new self(0);
@@ -161,7 +165,7 @@ final readonly class Currency implements Wireable
     }
 
     /**
-     * exports to Livewire format
+     * exports to Livewire format (numeric scalar)
      */
     public function toLivewire(): float
     {
@@ -169,9 +173,9 @@ final readonly class Currency implements Wireable
     }
 
     /**
-     * static constructor from Livewire format
+     * static constructor from Livewire format (numeric scalar)
      *
-     * @param  float  $value
+     * @param  float|int|string|null  $value
      */
     public static function fromLivewire($value): self
     {

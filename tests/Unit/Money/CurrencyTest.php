@@ -5,8 +5,8 @@ use SchenkeIo\Invoice\Money\Vat;
 
 it('stores and receives data to Livewire based on Wireable', function () {
     // Test the Wireable interface implementation
-    // toLivewire() serializes the Currency object to an array
-    // fromLivewire() deserializes the array back to a Currency object
+    // toLivewire() serializes the Currency object to a float
+    // fromLivewire() deserializes the float back to a Currency object
 
     // Create a test Currency object
     $originalCurrency = Currency::fromFloat(123.45);
@@ -75,6 +75,11 @@ it('can make currency from any value', function ($value, $result) {
 
     'x1' => ['1,12', 1.12],
 ]);
+
+it('returns the same instance when fromAny() is called with a Currency object', function () {
+    $currency = Currency::fromFloat(10.0);
+    expect(Currency::fromAny($currency))->toBe($currency);
+});
 
 it('can create Currency from cents', function ($cents, $expected) {
     // Create a Currency object from cents

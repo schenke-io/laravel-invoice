@@ -23,12 +23,12 @@ readonly class LineData
 
     private function __construct(
         public string $name,
-        float $totalGrossPrice,
+        Currency $totalGrossPrice,
         public InvoiceLineType $invoiceLineType,
         public string $countryCode = 'DE')
     {
         $vat = Vat::country($this->countryCode)->getVat($this->invoiceLineType->vatRate());
-        $this->lineTotalGrossPrice = Currency::fromFloat($totalGrossPrice);
+        $this->lineTotalGrossPrice = $totalGrossPrice;
 
         if ($this->invoiceLineType->vatCategory()->isReverseCharge()) {
             /*
@@ -51,28 +51,25 @@ readonly class LineData
     /**
      * Create a line item from its total gross price.
      */
-    public static function fromTotalGrossPrice(string $name, float $totalGrossPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
+    public static function fromTotalGrossPrice(string $name, Currency|float|int|string $totalGrossPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
-        return new self($name, $totalGrossPrice, $invoiceLineType, $countryCode);
+        return new self($name, Currency::fromAny($totalGrossPrice), $invoiceLineType, $countryCode);
     }
 
     /**
      * Create a line item from its total net price.
      */
-    public static function fromTotalNetPrice(string $name, float $totalNetPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
+    public static function fromTotalNetPrice(string $name, Currency|float|int|string $totalNetPrice, InvoiceLineType $invoiceLineType, string $countryCode = 'DE'): self
     {
         $vat = Vat::country($countryCode)->getVat($invoiceLineType->vatRate());
+        $net = Currency::fromAny($totalNetPrice);
 
         if ($invoiceLineType->vatCategory()->isReverseCharge()) {
-            $grossFloat = $totalNetPrice;
+            $gross = $net;
         } else {
-            $grossFloat = Currency::fromFloat($totalNetPrice)->fromNetToGross($vat)->toFloat();
+            $gross = $net->fromNetToGross($vat);
         }
 
-        return new self($name,
-            $grossFloat,
-            $invoiceLineType,
-            $countryCode
-        );
+        return new self($name, $gross, $invoiceLineType, $countryCode);
     }
 }

@@ -168,8 +168,8 @@ Value object representing a monetary currency.
 | plus           | adds two objects                                               |
 | minus          | subtracts two objects                                          |
 | times          | multiplies the object by a factor                              |
-| toLivewire     | exports to Livewire format                                     |
-| fromLivewire   | static constructor from Livewire format                        |
+| toLivewire     | exports to Livewire format (numeric scalar)                    |
+| fromLivewire   | static constructor from Livewire format (numeric scalar)       |
 | isEmpty        | Check if the object is empty (zero)                            |
 
 ### Vat
