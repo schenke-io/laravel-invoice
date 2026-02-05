@@ -3,8 +3,14 @@
 namespace SchenkeIo\Invoice\Enum;
 
 /**
- * Defines the high-level tax categories
- * based on the analysis from section I.C of the legal opinion.
+ * Defines the high-level tax categories based on the analysis from
+ * section I.C of the legal opinion.
+ *
+ * Each category describes the taxability of a transaction (e.g., taxable,
+ * non-taxable damages, transitory items, or deposits) and links to the
+ * appropriate VAT rate. This structure ensures that tax laws are
+ * correctly interpreted and applied throughout the invoicing process,
+ * from calculation to the final breakdown in the invoice summary.
  */
 enum VatCategory: int
 {

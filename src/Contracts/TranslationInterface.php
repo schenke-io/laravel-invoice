@@ -7,7 +7,9 @@ namespace SchenkeIo\Invoice\Contracts;
  *
  * This interface defines the contract for translating keys with optional
  * replacements and locale specification, ensuring consistent translation
- * across the package.
+ * across the package. It allows for different translation backends to
+ * be used, such as Laravel's native translation system or a custom
+ * implementation, providing flexibility in how localized text is managed.
  */
 interface TranslationInterface
 {

@@ -3,6 +3,7 @@
 namespace SchenkeIo\Invoice\Money;
 
 use Livewire\Wireable;
+use Stringable;
 
 /**
  * Value object representing a monetary currency.
@@ -11,7 +12,7 @@ use Livewire\Wireable;
  * integer representation (cents) to avoid floating-point errors. It
  * provides methods for arithmetic operations and VAT-based conversions.
  */
-final readonly class Currency implements Wireable
+final readonly class Currency implements Stringable, Wireable
 {
     public int $centValue;
 

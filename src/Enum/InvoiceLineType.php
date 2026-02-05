@@ -7,7 +7,9 @@ namespace SchenkeIo\Invoice\Enum;
  *
  * Each type represents a specific business scenario (e.g., sales, rentals,
  * deposits, damages) and maps to a corresponding VAT category and rate,
- * ensuring correct tax calculation and accounting.
+ * ensuring correct tax calculation and accounting. This categorization
+ * allows the system to automate tax handling based on the nature of the
+ * transaction, providing both financial accuracy and clear reporting.
  */
 enum InvoiceLineType: int
 {

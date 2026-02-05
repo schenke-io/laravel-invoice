@@ -12,7 +12,15 @@ use SchenkeIo\Invoice\Money\Currency;
  *
  * This class handles the display of standard line items and footer
  * totals, providing methods to create header, body, and footer rows
- * with appropriate formatting and translations.
+ * with appropriate formatting and translations. It implements the
+ * LineViewInterface and defines columns for:
+ * - Position ID (`lineId`)
+ * - Description (`name`)
+ * - Total Price (`totalPrice`)
+ *
+ * Each instance of this class represents a specific row in the main
+ * invoice table, carrying the formatted data and row-level styling
+ * information.
  */
 final readonly class InvoiceLineView extends LineViewBase implements LineViewInterface
 {

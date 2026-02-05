@@ -11,7 +11,9 @@ use SchenkeIo\Invoice\Money\Currency;
 
 // Create from various formats
 $price = Currency::fromFloat(19.99);
-$price2 = Currency::fromAny('12,50 €');
+$price2 = Currency::fromAny('12,50 €'); // EU format
+$price3 = Currency::fromAny('1,234.56'); // US format
+$negative = Currency::fromAny('-10,00'); // Negative value
 
 // Arithmetic
 $total = $price->plus($price2); // 32.49 €
@@ -42,7 +44,14 @@ $invoice->addLine(LineData::fromTotalGrossPrice(
 ));
 
 // Get HTML table for the invoice
-echo $invoice->invoiceTableView(isGrossInvoice: true)->html();
+$view = $invoice->invoiceTableView(isGrossInvoice: true);
+
+// Access header/body/footer specifically if needed
+$header = $view->header;
+$body = $view->body;
+$footer = $view->footer;
+
+echo $view->html();
 ```
 
 ### 3. Complex Multi-Tax Invoice

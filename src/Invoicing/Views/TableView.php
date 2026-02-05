@@ -11,6 +11,13 @@ use SchenkeIo\Invoice\Enum\LineDisplayType;
  * This abstract class provides the structure and configuration for
  * rendering invoice tables, including headers, bodies, and footers.
  * It supports both raw HTML generation and Laravel Blade-based rendering.
+ *
+ * Key responsibilities:
+ * - Storing header, body, and footer line objects.
+ * - Managing default CSS classes and configuration for rendering.
+ * - Providing a unified `html()` method that handles configuration merging
+ *   and rendering delegation (to raw HTML or Blade).
+ * - Defining the structure of the table (thead, tbody, tfoot).
  */
 abstract class TableView
 {

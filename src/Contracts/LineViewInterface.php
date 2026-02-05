@@ -9,7 +9,10 @@ use SchenkeIo\Invoice\Enum\LineDisplayType;
  *
  * This interface defines the contract for classes that handle the visual
  * representation of invoice lines, including column definitions and
- * HTML generation based on configuration and display type.
+ * HTML generation based on configuration and display type. Implementations
+ * of this interface are responsible for formatting internal data into
+ * table-ready structures and producing the final HTML string for their
+ * respective table section (header, body, or footer).
  */
 interface LineViewInterface
 {

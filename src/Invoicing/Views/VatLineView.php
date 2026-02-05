@@ -14,6 +14,15 @@ use SchenkeIo\Invoice\Money\Vat;
  * This class handles the display of VAT categories, including the
  * associated positions, description, amounts, and rates, ensuring
  * that tax breakdowns are clearly presented on the invoice.
+ * It implements LineViewInterface and provides columns for:
+ * - List of positions (`positions`)
+ * - Tax category description (`description`)
+ * - Base amount (Net or Gross) (`mainAmount`)
+ * - VAT rate percentage (`vatRate`)
+ * - Calculated VAT amount (`vatAmount`)
+ *
+ * It is typically used within a `VatTableView` to show a summary
+ * of taxes applied to the invoice.
  */
 readonly class VatLineView extends LineViewBase implements LineViewInterface
 {

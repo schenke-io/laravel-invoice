@@ -33,6 +33,35 @@
 - **Developer Friendly**: 100% test coverage, strict typing, and comprehensive documentation ensure a reliable and maintainable integration into your Laravel projects.
 - **Eloquent Integration**: Custom casts for `Currency` make it easy to work with monetary values directly in your models.
 
+### Core Components
+
+#### Currency Value Object
+
+The `Currency` class (`src/Money/Currency.php`) is the heart of all monetary operations. It stores values as integers (cents) and provides a rich set of methods for:
+- **Parsing**: Use `Currency::fromAny($value)` to handle strings, floats, integers, and even other `Currency` instances. It automatically detects EU/US decimal formats.
+- **VAT Conversions**: 
+  - `vatFromGross(Vat $vat)`: Extract VAT amount from a gross total.
+  - `vatFromNet(Vat $vat)`: Calculate VAT amount from a net total.
+  - `fromGrossToNet(Vat $vat)`: Calculate net price from gross.
+  - `fromNetToGross(Vat $vat)`: Calculate gross price from net.
+- **Arithmetic**: Precise `plus()`, `minus()`, and `times()` operations that maintain integer integrity.
+
+Example:
+```php
+$price = Currency::fromAny("1.234,56 €"); // EU format detected
+$vat = new Vat(0.19);
+$net = $price->fromGrossToNet($vat);
+```
+
+#### InvoiceNumeric
+
+`InvoiceNumeric` (`src/Invoicing/InvoiceNumeric.php`) orchestrates the creation of an invoice. Its main responsibilities include:
+- Managing invoice metadata (ID, Date, Customer).
+- Collecting invoice lines (`addLine()`).
+- Tracking total weights (`addWeight()`).
+- Generating structured view data for rendering via `invoiceTableView()`.
+- Providing a default rendering of the invoice header, body, and footer with automated VAT summaries.
+
 # Usage Examples
 
 Here are some examples of how to use the `laravel-invoice` package, ranging from basic currency operations to complex multi-tax invoices.
@@ -46,7 +75,9 @@ use SchenkeIo\Invoice\Money\Currency;
 
 // Create from various formats
 $price = Currency::fromFloat(19.99);
-$price2 = Currency::fromAny('12,50 €');
+$price2 = Currency::fromAny('12,50 €'); // EU format
+$price3 = Currency::fromAny('1,234.56'); // US format
+$negative = Currency::fromAny('-10,00'); // Negative value
 
 // Arithmetic
 $total = $price->plus($price2); // 32.49 €
@@ -77,7 +108,14 @@ $invoice->addLine(LineData::fromTotalGrossPrice(
 ));
 
 // Get HTML table for the invoice
-echo $invoice->invoiceTableView(isGrossInvoice: true)->html();
+$view = $invoice->invoiceTableView(isGrossInvoice: true);
+
+// Access header/body/footer specifically if needed
+$header = $view->header;
+$body = $view->body;
+$footer = $view->footer;
+
+echo $view->html();
 ```
 
 ### 3. Complex Multi-Tax Invoice
@@ -186,7 +224,7 @@ Represents a Value Added Tax (VAT) rate and provides factory methods for countri
 
 ### VatCategory
 
-Defines the high-level tax categories
+Defines the high-level tax categories based on the analysis from
 
 #### Public methods of VatCategory
 
@@ -281,6 +319,24 @@ This class should define the column-alignment in the `columns()` method.
 
 Then you start a new instance of `InvoiceTableView` and fill its public data.
 The `columns()` method must return keys that correspond to the public properties of your custom line view class.
+
+### CSS Styling
+
+The rendering engine uses a configuration-based approach for CSS classes. You can customize the look of your tables by providing a config array to the `html()` method or by using the default configuration in `TableView`.
+
+#### Row Classes
+The following keys in the configuration control row-level styling:
+- `invoice-row-thead`: Classes for the `<thead>` row.
+- `invoice-row-tbody`: Classes for rows within `<tbody>`.
+- `invoice-row-tfoot`: Classes for rows within `<tfoot>`.
+- `invoice-row-empty`: Classes for empty/spacer rows.
+- `invoice-row-{LineType}`: Classes specifically for rows of a certain `InvoiceLineType` (e.g., `invoice-row-SalesDE`).
+
+#### Cell Classes
+The following keys control cell-level alignment and emphasis:
+- `invoice-cell-left`: Classes for left-aligned cells (default: `cell-left`).
+- `invoice-cell-right`: Classes for right-aligned cells (default: `cell-right`).
+- `invoice-cell-bold`: Classes for cells that should be bold (default: `cell-bold`).
 
 
 ---
