@@ -43,7 +43,29 @@ class Country implements VatInterface
         'SE' => ['name' => 'sweden', 'vat' => ['250', '120', '000'], 'isEu' => true],
         'SI' => ['name' => 'slovenia', 'vat' => ['220', '095', '000'], 'isEu' => true],
         'SK' => ['name' => 'slovakia', 'vat' => ['200', '100', '000'], 'isEu' => true],
+        'AE' => ['name' => 'united arab emirates', 'vat' => ['050', '050', '000'], 'isEu' => false],
+        'AU' => ['name' => 'australia', 'vat' => ['100', '100', '000'], 'isEu' => false],
+        'BH' => ['name' => 'bahrain', 'vat' => ['100', '100', '000'], 'isEu' => false],
+        'CA' => ['name' => 'canada', 'vat' => ['050', '050', '000'], 'isEu' => false],
         'CH' => ['name' => 'switzerland', 'vat' => ['081', '026', '000'], 'isEu' => false],
+        'EG' => ['name' => 'egypt', 'vat' => ['140', '050', '000'], 'isEu' => false],
+        'GB' => ['name' => 'united kingdom', 'vat' => ['200', '050', '000'], 'isEu' => false],
+        'IL' => ['name' => 'israel', 'vat' => ['180', '180', '000'], 'isEu' => false],
+        'IR' => ['name' => 'iran', 'vat' => ['090', '090', '000'], 'isEu' => false],
+        'IQ' => ['name' => 'iraq', 'vat' => ['000', '000', '000'], 'isEu' => false],
+        'JO' => ['name' => 'jordan', 'vat' => ['160', '080', '000'], 'isEu' => false],
+        'JP' => ['name' => 'japan', 'vat' => ['100', '080', '000'], 'isEu' => false],
+        'KR' => ['name' => 'south korea', 'vat' => ['100', '100', '000'], 'isEu' => false],
+        'KW' => ['name' => 'kuwait', 'vat' => ['000', '000', '000'], 'isEu' => false],
+        'LB' => ['name' => 'lebanon', 'vat' => ['110', '110', '000'], 'isEu' => false],
+        'OM' => ['name' => 'oman', 'vat' => ['050', '050', '000'], 'isEu' => false],
+        'PS' => ['name' => 'palestine', 'vat' => ['160', '160', '000'], 'isEu' => false],
+        'QA' => ['name' => 'qatar', 'vat' => ['000', '000', '000'], 'isEu' => false],
+        'SA' => ['name' => 'saudi arabia', 'vat' => ['150', '150', '000'], 'isEu' => false],
+        'SY' => ['name' => 'syria', 'vat' => ['000', '000', '000'], 'isEu' => false],
+        'TR' => ['name' => 'turkey', 'vat' => ['200', '100', '000'], 'isEu' => false],
+        'US' => ['name' => 'united states', 'vat' => ['000', '000', '000'], 'isEu' => false],
+        'YE' => ['name' => 'yemen', 'vat' => ['050', '050', '000'], 'isEu' => false],
     ];
 
     /**
@@ -51,6 +73,9 @@ class Country implements VatInterface
      */
     protected array $countryData;
 
+    /**
+     * @throws VatException
+     */
     public function __construct(public readonly string $isoCode)
     {
         if (! isset(self::DATA[strtoupper($isoCode)])) {
@@ -93,7 +118,11 @@ class Country implements VatInterface
             return 'https://www.estv.admin.ch/estv/en/home/value-added-tax.html';
         }
 
-        return "https://taxation-customs.ec.europa.eu/taxation/vat/vat-rules-rates/{$name}_en";
+        if ($this->countryData['isEu']) {
+            return "https://taxation-customs.ec.europa.eu/taxation/vat/vat-rules-rates/{$name}_en";
+        }
+
+        return 'https://taxsummaries.pwc.com/quick-charts/value-added-tax-vat-rates';
     }
 
     /**

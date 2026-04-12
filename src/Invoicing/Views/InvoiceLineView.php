@@ -3,6 +3,7 @@
 namespace SchenkeIo\Invoice\Invoicing\Views;
 
 use SchenkeIo\Invoice\Contracts\LineViewInterface;
+use SchenkeIo\Invoice\Contracts\TranslationInterface;
 use SchenkeIo\Invoice\Invoicing\LineData;
 use SchenkeIo\Invoice\Invoicing\LineViewBase;
 use SchenkeIo\Invoice\Money\Currency;
@@ -36,7 +37,7 @@ final readonly class InvoiceLineView extends LineViewBase implements LineViewInt
         parent::__construct($isBold);
     }
 
-    public static function lineItem(int $lineId, LineData $lineItem, bool $isGross = true, ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function lineItem(int $lineId, LineData $lineItem, bool $isGross = true, ?TranslationInterface $translator = null): self
     {
         if ($isGross) {
             $totalPrice = $lineItem->lineTotalGrossPrice->str();
@@ -47,12 +48,12 @@ final readonly class InvoiceLineView extends LineViewBase implements LineViewInt
         return new self($lineId, $lineItem->name, $totalPrice, $lineItem->lineTotalGrossPrice->isEmpty(), false);
     }
 
-    public static function footerTotal(Currency $amount, string $text, bool $isBold, ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function footerTotal(Currency $amount, string $text, bool $isBold, ?TranslationInterface $translator = null): self
     {
         return new self('', $text, $amount->str(), $amount->isEmpty(), $isBold);
     }
 
-    public static function header(string $pricePrefix, ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function header(string $pricePrefix, ?TranslationInterface $translator = null): self
     {
         if ($translator) {
             $pos = $translator->translate('invoice::invoice.pos');

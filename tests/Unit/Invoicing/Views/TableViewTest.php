@@ -5,13 +5,13 @@ use SchenkeIo\Invoice\Enum\LineDisplayType;
 use SchenkeIo\Invoice\Invoicing\Views\TableView;
 
 it('can generate HTML without blade view', function () {
-    $header = \Mockery::mock(LineViewInterface::class);
+    $header = Mockery::mock(LineViewInterface::class);
     $header->shouldReceive('html')->andReturn('<tr><th>Header</th></tr>');
     $header->shouldReceive('columns')->andReturn(['col1' => false]);
 
-    $line = \Mockery::mock(LineViewInterface::class);
-    $line->shouldReceive('html')->with(\Mockery::any(), LineDisplayType::tbody)->andReturn('<tr><td>Body</td></tr>');
-    $line->shouldReceive('html')->with(\Mockery::any(), LineDisplayType::tfoot)->andReturn('<tr><td>Footer</td></tr>');
+    $line = Mockery::mock(LineViewInterface::class);
+    $line->shouldReceive('html')->with(Mockery::any(), LineDisplayType::tbody)->andReturn('<tr><td>Body</td></tr>');
+    $line->shouldReceive('html')->with(Mockery::any(), LineDisplayType::tfoot)->andReturn('<tr><td>Footer</td></tr>');
 
     $view = new class extends TableView {};
     $view->header = $header;

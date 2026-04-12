@@ -2,6 +2,8 @@
 
 namespace SchenkeIo\Invoice\Enum;
 
+use SchenkeIo\Invoice\Contracts\TranslationInterface;
+
 /**
  * Defines the high-level tax categories based on the analysis from
  * section I.C of the legal opinion.
@@ -51,7 +53,7 @@ enum VatCategory: int
     /**
      * German description of the category.
      */
-    public function description(?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): string
+    public function description(?TranslationInterface $translator = null): string
     {
         $key = match ($this) {
             self::Taxable => 'invoice::invoice.vat_categories.taxable',

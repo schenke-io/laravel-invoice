@@ -3,6 +3,7 @@
 namespace SchenkeIo\Invoice\Invoicing\Views;
 
 use SchenkeIo\Invoice\Contracts\LineViewInterface;
+use SchenkeIo\Invoice\Contracts\TranslationInterface;
 use SchenkeIo\Invoice\Enum\VatCategory;
 use SchenkeIo\Invoice\Invoicing\LineViewBase;
 use SchenkeIo\Invoice\Money\Currency;
@@ -40,7 +41,7 @@ readonly class VatLineView extends LineViewBase implements LineViewInterface
     /**
      * @param  array<int,int>  $positions
      */
-    public static function lineItem(array $positions, VatCategory $vatCategory, Currency $gross, Currency $net, bool $isGross, string $countryCode = 'DE', ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function lineItem(array $positions, VatCategory $vatCategory, Currency $gross, Currency $net, bool $isGross, string $countryCode = 'DE', ?TranslationInterface $translator = null): self
     {
         return new self(
             positions: implode(',&nbsp;', $positions),
@@ -70,7 +71,7 @@ readonly class VatLineView extends LineViewBase implements LineViewInterface
     /**
      * get the table header information
      */
-    public static function header(string $pricePrefix, ?\SchenkeIo\Invoice\Contracts\TranslationInterface $translator = null): self
+    public static function header(string $pricePrefix, ?TranslationInterface $translator = null): self
     {
         if ($translator) {
             $pos = $translator->translate('invoice::invoice.pos');

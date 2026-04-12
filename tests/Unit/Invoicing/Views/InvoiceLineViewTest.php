@@ -7,7 +7,7 @@ use SchenkeIo\Invoice\Invoicing\Views\InvoiceLineView;
 use SchenkeIo\Invoice\Money\Currency;
 
 it('can create a header with a translator', function () {
-    $translator = \Mockery::mock(TranslationInterface::class);
+    $translator = Mockery::mock(TranslationInterface::class);
     $translator->shouldReceive('translate')->with('invoice::invoice.pos')->andReturn('Position');
     $translator->shouldReceive('translate')->with('invoice::invoice.description')->andReturn('Desc');
     $translator->shouldReceive('translate')->with('invoice::invoice.total')->andReturn('Sum');

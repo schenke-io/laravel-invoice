@@ -1,5 +1,7 @@
 <?php
 
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,8 +13,8 @@
 |
 */
 
-pest()->extend(\Tests\TestCase::class)->in('Feature');
-pest()->extend(\PHPUnit\Framework\TestCase::class)->in('Unit');
+pest()->extend(TestCase::class)->in('Feature');
+pest()->extend(PHPUnit\Framework\TestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
