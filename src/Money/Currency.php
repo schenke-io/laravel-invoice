@@ -53,10 +53,10 @@ final readonly class Currency implements Stringable, Wireable
         }
 
         if (preg_match('/^.*?,*\d+\.\d+$/', $clean)) {
-            // US format (comma as thousands separator, dot as decimal)
+            // US format (comma as thousand separator, dot as decimal)
             $clean = str_replace(',', '', $clean);
         } elseif (preg_match('/^.*?\.*\d+,\d+$/', $clean)) {
-            // EU format (dot as thousands separator, comma as decimal)
+            // EU format (dot as thousand separator, comma as decimal)
             $clean = str_replace('.', '', $clean);
             $clean = str_replace(',', '.', $clean);
         }
@@ -167,20 +167,25 @@ final readonly class Currency implements Stringable, Wireable
 
     /**
      * exports to Livewire format (numeric scalar)
+     * must be an array even when not explicitly documented
+     *
+     * @return array<string, int>
      */
-    public function toLivewire(): float
+    public function toLivewire(): array
     {
-        return $this->toFloat();
+        return [
+            'cents' => $this->centValue,
+        ];
     }
 
     /**
      * static constructor from Livewire format (numeric scalar)
      *
-     * @param  float|int|string|null  $value
+     * @param  array<string, int>  $value
      */
     public static function fromLivewire($value): self
     {
-        return self::fromAny($value);
+        return new Currency($value['cents']);
     }
 
     /**

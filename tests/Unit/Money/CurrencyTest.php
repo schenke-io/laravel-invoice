@@ -15,8 +15,8 @@ it('stores and receives data to Livewire based on Wireable', function () {
     $livewireData = $originalCurrency->toLivewire();
 
     // Verify the serialized data structure
-    expect($livewireData)->toBeFloat()
-        ->and($livewireData)->toBe(123.45);
+    expect($livewireData)->toBeArray()
+        ->and($livewireData)->toBe(['cents' => 12345]);
 
     // Deserialize from Livewire format
     $deserializedCurrency = Currency::fromLivewire($livewireData);
