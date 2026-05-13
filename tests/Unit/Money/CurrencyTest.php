@@ -40,6 +40,19 @@ it('stores and receives data to Livewire based on Wireable', function () {
     expect($negativeDeserialized->toFloat())->toBe(-99.99);
 });
 
+it('tests fromLivewire fallback cases', function ($value, $expectedCents) {
+    $currency = Currency::fromLivewire($value);
+    expect($currency->centValue)->toBe($expectedCents);
+})->with([
+    'null value' => [null, 0],
+    'int value' => [10, 1000],
+    'float value' => [12.34, 1234],
+    'string value' => ['12,34 €', 1234],
+    'array without cents' => [['foo' => 'bar'], 0],
+    'empty array' => [[], 0],
+    'cents array' => [['cents' => 1234], 1234],
+]);
+
 it('can calculate VAT net and gross', function () {
     $net = 100.0;
     $tax = 19.0;

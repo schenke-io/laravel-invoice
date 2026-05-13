@@ -31,7 +31,7 @@ final readonly class Currency implements Stringable, Wireable
         }
 
         // Normalize nulls and pure numerics early
-        if ($value === null) {
+        if ($value === null || is_array($value)) {
             return new self(0);
         }
 
@@ -185,7 +185,11 @@ final readonly class Currency implements Stringable, Wireable
      */
     public static function fromLivewire($value): self
     {
-        return new Currency($value['cents']);
+        if (is_array($value) && isset($value['cents'])) {
+            return new Currency($value['cents']);
+        }
+
+        return self::fromAny($value);
     }
 
     /**
