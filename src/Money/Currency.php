@@ -30,8 +30,11 @@ final readonly class Currency implements Stringable, Wireable
             return $value;
         }
 
-        // Normalize nulls and pure numerics early
-        if ($value === null || is_array($value)) {
+        if (is_array($value)) {
+            return new self((int) ($value['cents'] ?? $value['centValue'] ?? 0));
+        }
+
+        if ($value === null || $value === '') {
             return new self(0);
         }
 
@@ -44,8 +47,7 @@ final readonly class Currency implements Stringable, Wireable
         }
 
         // Cast everything else to string and strip non-digit/decimal/separator chars
-        $string = (string) $value;
-        $clean = preg_replace('/[^0-9.,-]/', '', $string) ?? '';
+        $clean = preg_replace('/[^0-9.,-]/', '', (string) $value) ?? '';
         $clean = trim($clean);
 
         if ($clean === '') {
@@ -178,17 +180,8 @@ final readonly class Currency implements Stringable, Wireable
         ];
     }
 
-    /**
-     * static constructor from Livewire format (numeric scalar)
-     *
-     * @param  array<string, int>  $value
-     */
-    public static function fromLivewire($value): self
+    public static function fromLivewire(mixed $value): self
     {
-        if (is_array($value) && isset($value['cents'])) {
-            return new Currency($value['cents']);
-        }
-
         return self::fromAny($value);
     }
 

@@ -28,11 +28,17 @@ it('converts database value to Currency object', function ($value, $result) {
         ->and($casted->toFloat())->toBe($result);
 })->with([
     'null' => [null, 0.0],
+    'empty string' => ['', 0.0],
     '0' => [0, 0.0],
+    'int 123' => [123, 123.0],
     '1.23' => [1.23, 1.23],
     '123.45' => [123.45, 123.45],
     '-123.45' => [-123.45, -123.45],
     '123.456789' => [123.456789, 123.46],
+    'array cents' => [['cents' => 123], 1.23],
+    'array centValue' => [['centValue' => 456], 4.56],
+    'EU format' => ['1.234,56', 1234.56],
+    'US format' => ['1,234.56', 1234.56],
 ]);
 
 it('converts Currency object to float', function ($value, $result) {
@@ -57,8 +63,12 @@ it('converts Currency object to float', function ($value, $result) {
     expect($stored)->toBe($result);
 })->with([
     'null' => [null, 0.0],
+    'empty string' => ['', 0.0],
     '0' => [0, 0.0],
+    '123' => [123, 123.0],
     '12,34 Euro' => ['12,34 Euro', 12.34],
+    'array cents' => [['cents' => 123], 1.23],
+    'currency instance' => [Currency::fromFloat(1.23), 1.23],
 ]);
 
 it('can serialize Currency object', function ($input, $result) {
@@ -83,8 +93,10 @@ it('can serialize Currency object', function ($input, $result) {
     expect($serialized)->toBe($result);
 })->with([
     'null to "0"' => [null, '0,00'],
+    'empty string' => ['', '0,00'],
     'int to string' => [0, '0,00'],
     'float rounded' => [123.4567, '123,46'],
     'currency instance' => [Currency::fromFloat(123), '123,00'],
     'string with euro' => ['12,34 Euro', '12,34'],
+    'array cents' => [['cents' => 123], '1,23'],
 ]);

@@ -208,7 +208,7 @@ Value object representing a monetary currency.
 | minus          | subtracts two objects                                          |
 | times          | multiplies the object by a factor                              |
 | toLivewire     | exports to Livewire format (numeric scalar)                    |
-| fromLivewire   | static constructor from Livewire format (numeric scalar)       |
+| fromLivewire   | -                                                              |
 | isEmpty        | Check if the object is empty (zero)                            |
 
 ### <a name="vat"></a>Vat
