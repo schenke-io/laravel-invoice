@@ -86,11 +86,14 @@ class Country implements VatInterface
 
     public function getVat(VatRate $vatRate): Vat
     {
-        return match ($vatRate) {
-            VatRate::Standard => $this->standard(),
-            VatRate::Reduced => $this->reduced(),
-            VatRate::None => $this->none(),
-        };
+        if ($vatRate === VatRate::Standard) {
+            return $this->standard();
+        }
+        if ($vatRate === VatRate::Reduced) {
+            return $this->reduced();
+        }
+
+        return $this->none();
     }
 
     public function standard(): Vat

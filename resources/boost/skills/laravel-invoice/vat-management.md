@@ -1,7 +1,6 @@
----
-name: laravel-invoice-vat-management
-description: Handle VAT calculations, rates, and categories across different countries.
----
+# VAT Management
+
+Handle VAT calculations, rates, and categories across different countries.
 
 ### When to use
 - When checking VAT rates for specific countries.

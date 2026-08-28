@@ -7,7 +7,7 @@
         </div>
         <div style="display: flex; gap: 0.5rem;">
             <span style="background: #065f46; color: #a7f3d0; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">Active</span>
-            <span style="background: #1e3a8a; color: #dbeafe; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">PHP 8.3+</span>
+            <span style="background: #1e3a8a; color: #dbeafe; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">PHP 8.4+</span>
         </div>
     </div>
 

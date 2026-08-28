@@ -61,7 +61,11 @@ class SepaCode
         // Create generic label
         $label = new Label(
             text: $this->information,
-            textColor: new Color($red, $green, $blue)
+            textColor: new Color(
+                max(0, min(255, $red)),
+                max(0, min(255, $green)),
+                max(0, min(255, $blue))
+            )
         );
         $qrCode = new QrCode(
             data: $this->paymentData,

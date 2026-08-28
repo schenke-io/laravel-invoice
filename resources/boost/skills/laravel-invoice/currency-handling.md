@@ -1,7 +1,6 @@
----
-name: laravel-invoice-currency-handling
-description: Precise money operations and formatting using the Currency value object.
----
+# Currency Handling
+
+Precise money operations and formatting using the `Currency` value object.
 
 ### When to use
 - When performing financial arithmetic (addition, subtraction, multiplication).

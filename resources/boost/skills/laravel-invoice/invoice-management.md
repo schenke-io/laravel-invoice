@@ -1,7 +1,6 @@
----
-name: laravel-invoice-invoice-management
-description: Creating, calculating, and rendering invoices using InvoiceNumeric and InvoiceCalculator.
----
+# Invoice Management
+
+Creating, calculating, and rendering invoices using `InvoiceNumeric` and `InvoiceCalculator`.
 
 ### When to use
 - When creating new invoices with line items.

@@ -1,7 +1,6 @@
----
-name: laravel-invoice-sepa-qr-code
-description: Generating SEPA-compliant QR codes (BezahlCode) for bank transfers and payments.
----
+# SEPA QR Code
+
+Generating SEPA-compliant QR codes (BezahlCode) for bank transfers and payments.
 
 ### When to use
 - When you need to embed a scannable bank-transfer QR code on an invoice.
