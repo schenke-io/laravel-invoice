@@ -193,23 +193,28 @@ Value object representing a monetary currency.
 
 #### <a name="public-methods-of-currency"></a>Public methods of Currency
 
-| method         | summary                                                        |
-|----------------|----------------------------------------------------------------|
-| fromAny        | static constructor from any value                              |
-| fromFloat      | static constructor from a float value                          |
-| fromCents      | static constructor from cents                                  |
-| vatFromGross   | VAT amount from the gross price, given a VAT rate.             |
-| vatFromNet     | Calculate the VAT amount from the net price, given a VAT rate. |
-| fromGrossToNet | convert a gross value to a net value using VAT                 |
-| fromNetToGross | Convert a net value to a gross value using VAT                 |
-| toFloat        | exports to float                                               |
-| str            | exports to formatted currency string                           |
-| plus           | adds two objects                                               |
-| minus          | subtracts two objects                                          |
-| times          | multiplies the object by a factor                              |
-| toLivewire     | exports to Livewire format (numeric scalar)                    |
-| fromLivewire   | -                                                              |
-| isEmpty        | Check if the object is empty (zero)                            |
+| method         | summary                                                                   |
+|----------------|---------------------------------------------------------------------------|
+| fromAny        | static constructor from any value                                         |
+| fromFloat      | static constructor from a float value                                     |
+| fromCents      | static constructor from cents                                             |
+| code           | Returns the ISO 4217 currency code.                                       |
+| withCode       | Returns a new Currency instance with the specified currency code.         |
+| vatFromGross   | VAT amount from the gross price, given a VAT rate.                        |
+| vatFromNet     | Calculate the VAT amount from the net price, given a VAT rate.            |
+| fromGrossToNet | convert a gross value to a net value using VAT                            |
+| fromNetToGross | Convert a net value to a gross value using VAT                            |
+| toFloat        | exports to float                                                          |
+| formatted      | Returns the formatted value with thousands separator (German format).     |
+| formattedStr   | Returns the formatted value with thousands separator and currency symbol. |
+| dividedBy      | Divides the currency value by the given divisor with half-up rounding.    |
+| str            | exports to formatted currency string                                      |
+| plus           | adds two objects                                                          |
+| minus          | subtracts two objects                                                     |
+| times          | multiplies the object by a factor                                         |
+| toLivewire     | exports to Livewire format (numeric scalar)                               |
+| fromLivewire   | -                                                                         |
+| isEmpty        | Check if the object is empty (zero)                                       |
 
 ### <a name="vat"></a>Vat
 

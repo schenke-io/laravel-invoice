@@ -1,135 +1,79 @@
-<div class="package-hud" style="background: #1e293b; color: #f8fafc; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #334155; font-family: ui-sans-serif, system-ui, sans-serif; margin-bottom: 2rem;">
-    <!-- Identity -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.5rem;">📦</span>
-            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #f8fafc;">laravel-invoice</h2>
-        </div>
-        <div style="display: flex; gap: 0.5rem;">
-            <span style="background: #065f46; color: #a7f3d0; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">Active</span>
-            <span style="background: #1e3a8a; color: #dbeafe; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">PHP 8.4+</span>
-        </div>
-    </div>
+## schenke-io/laravel-invoice
 
-    <!-- Status Indicators -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #334155; padding: 1rem; border-radius: 0.5rem;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div style="width: 0.5rem; height: 0.5rem; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
-            <span style="font-size: 0.875rem; color: #cbd5e1;">Translations: Loaded</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div style="width: 0.5rem; height: 0.5rem; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
-            <span style="font-size: 0.875rem; color: #cbd5e1;">SEPA: Ready</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div style="width: 0.5rem; height: 0.5rem; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
-            <span style="font-size: 0.875rem; color: #cbd5e1;">Tests: Passing</span>
-        </div>
-    </div>
+- Cent-precise money (`Currency`), country VAT rates (`Vat`, `Country`), invoice building and HTML rendering (`InvoiceNumeric`, `LineData`, `InvoiceTableView`) and SEPA payment QR codes (`SepaCode`).
+- IMPORTANT: Activate the `laravel-invoice` skill when working with currency, VAT, invoice lines, invoice tables, the `CurrencyCast`, or SEPA QR codes.
 
-    <!-- Health Check -->
-    @unless(\Illuminate\Support\Facades\Lang::has('invoice::invoice.vat'))
-        <div style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #450a0a; border: 1px solid #991b1b; border-left-width: 4px; border-radius: 0.375rem; color: #fecaca; font-size: 0.875rem; display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.25rem;">⚠️</span>
-            <span>Critical: Package translations are not loaded. Check your service provider registration.</span>
-        </div>
-    @endunless
+### Conventions
 
-    <!-- Usage Snippet -->
-    <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <span style="font-size: 0.875rem; font-weight: 500; color: #94a3b8;">Gold Standard Usage</span>
-            <span style="font-size: 0.75rem; color: #64748b;">PHP</span>
-        </div>
-        <pre style="background: #0f172a; color: #38bdf8; padding: 1rem; border-radius: 0.375rem; font-size: 0.8125rem; margin: 0; border: 1px solid #1e293b; overflow-x: auto;">
-$invoice = new InvoiceNumeric('INV-001', now(), $customer);
-$invoice->addLine(LineData::fromTotalNetPrice('Item', 100, InvoiceLineType::SalesDE));
-echo $invoice->invoiceTableView(true)->html();</pre>
-    </div>
-</div>
+- The root namespace is `SchenkeIo\Invoice` (for example `SchenkeIo\Invoice\Money\Currency`). There is no `SchenkeIo\LaravelInvoice` namespace.
+- Money is always a `Currency` value object: integer cents plus an ISO 4217 code (default `EUR`). Never do float arithmetic on prices.
+- `Currency` is immutable. Every operation returns a new instance. `plus()` and `minus()` throw `MismatchedCurrencyException` when the codes differ.
+- Resolve VAT via `Vat::country('DE')` (or `Vat::de()`), then `->getVat(VatRate::Standard)`, `->standard()`, `->reduced()` or `->none()`. Unknown ISO codes throw `VatException`.
+- Create invoice lines only with `LineData::fromTotalGrossPrice()` or `LineData::fromTotalNetPrice()`. The `InvoiceLineType` decides the VAT category and rate; reverse-charge types carry no VAT.
+- Rendering never needs Blade: `$invoice->invoiceTableView(isGrossInvoice: true)->html()` returns a complete `<table>`. Pass a config array to override CSS classes or a `blade-view` name.
+- The `InvoiceServiceProvider` is auto-discovered and registers the `invoice::` translation namespace (`en`, `de`).
 
-## Laravel Invoice
+### Currency
 
-This package provides robust and flexible currency handling, VAT calculations, and invoice management for Laravel.
-
-### Features
-
-- **Currency Management**: Use the `Currency` value object for precise cent-based integer arithmetic.
-- **VAT Logic**: Automatic VAT logic based on `InvoiceLineType`, `VatCategory`, and `VatRate`.
-- **Vat Rate Provider**: Country-specific VAT rates provided by the `Vat` class.
-- **Invoice Generation**: Create invoices using `InvoiceNumeric` (delegates to `InvoiceCalculator`), `Customer`, and `LineData`.
-- **Flexible Rendering**: HTML table generation via `InvoiceTableView` and customizable `LineViewBase`.
-- **SEPA QR Codes**: Generate SEPA-compliant QR codes for payments using `SepaCode`.
-
-### Basic Usage
-
-#### Currency Operations
 @verbatim
-<code-snippet name="Currency Usage" lang="php">
+<code-snippet name="Currency arithmetic and formatting" lang="php">
 use SchenkeIo\Invoice\Money\Currency;
 
-// Precise cent-based arithmetic
 $price = Currency::fromFloat(19.99);
 $total = $price->plus(Currency::fromAny('12,50 €'));
-$discounted = $total->times(0.9); // 10% discount
+$discounted = $total->times(0.9);
 
-echo $discounted->str(); // "29,24 €"
+echo $discounted->str();                              // "29,24 €"
+echo Currency::fromCents(123450)->formattedStr();     // "1.234,50 €"
+echo Currency::fromCents(123450, 'USD')->formattedStr(); // "1.234,50 $"
 </code-snippet>
 @endverbatim
 
-#### Creating an Invoice
+### Invoice
+
 @verbatim
-<code-snippet name="Create Invoice" lang="php">
-use SchenkeIo\Invoice\Invoicing\InvoiceNumeric;
-use SchenkeIo\Invoice\Invoicing\Customer;
-use SchenkeIo\Invoice\Invoicing\LineData;
-use SchenkeIo\Invoice\Enum\InvoiceLineType;
+<code-snippet name="Build and render an invoice" lang="php">
 use Carbon\Carbon;
+use SchenkeIo\Invoice\Enum\InvoiceLineType;
+use SchenkeIo\Invoice\Invoicing\Customer;
+use SchenkeIo\Invoice\Invoicing\InvoiceNumeric;
+use SchenkeIo\Invoice\Invoicing\LineData;
 
 $customer = new Customer('Jane Doe', 'Main Street 1', '12345', 'Berlin', 'DE');
 $invoice = new InvoiceNumeric('INV-001', Carbon::now(), $customer);
 
-// Add line items
-$invoice->addLine(LineData::fromTotalGrossPrice(
-    'Service Name', 
-    119.00, 
-    InvoiceLineType::SalesDE
-));
+$invoice->addLine(LineData::fromTotalGrossPrice('Service', 119.00, InvoiceLineType::SalesDE));
+$invoice->addLine(LineData::fromTotalNetPrice('Book', 10.00, InvoiceLineType::SaleBooksDE));
+$invoice->addWeight(500); // grams, optional
 
-// Add weight (optional)
-$invoice->addWeight(500); // grams
-
-// Get HTML representation
 $html = $invoice->invoiceTableView(isGrossInvoice: true)->html();
 </code-snippet>
 @endverbatim
 
-#### SEPA QR Code
+### SEPA QR code
+
 @verbatim
-<code-snippet name="SEPA QR Code" lang="php">
+<code-snippet name="SEPA payment QR code from an invoice" lang="php">
 use SchenkeIo\Invoice\Banking\SepaCode;
 
-$sepa = SepaCode::fromInvoice(
-    $invoice, 
-    'Account Holder', 
-    'DE12345678901234567890', 
-    'INV-001',
-    'ABCDEFGH' // optional BIC
-);
+$sepa = SepaCode::fromInvoice($invoice, 'Account Holder', 'DE89370400440532013000', 'RE', 'COBADEFFXXX');
 
-echo '<img src="' . $sepa->dataUri() . '" />';
+echo '<img src="'.$sepa->dataUri().'" alt="SEPA QR">';
 </code-snippet>
 @endverbatim
 
-#### VAT Management
-@verbatim
-<code-snippet name="VAT Rates" lang="php">
-use SchenkeIo\Invoice\Money\Vat;
-use SchenkeIo\Invoice\Enum\VatCategory;
+### VAT
 
-// Get VAT rate for a specific country and category
-$vat = Vat::country('DE')->getVat(VatCategory::Sales);
-echo $vat->rate; // 0.19
-echo $vat->percent(); // "19%"
+@verbatim
+<code-snippet name="Country VAT rates" lang="php">
+use SchenkeIo\Invoice\Enum\VatRate;
+use SchenkeIo\Invoice\Money\Vat;
+
+$vat = Vat::country('DE')->getVat(VatRate::Standard);
+echo $vat->rate;  // 0.19
+echo $vat->name;  // "19%"
+
+$reduced = Vat::de()->reduced();   // 7%
+$custom = Vat::fromRate(0.081);    // "8,1%"
 </code-snippet>
 @endverbatim

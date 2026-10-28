@@ -1,6 +1,7 @@
 <?php
 
 use SchenkeIo\Invoice\Money\Currency;
+use SchenkeIo\Invoice\Money\MismatchedCurrencyException;
 use SchenkeIo\Invoice\Money\Vat;
 
 it('stores and receives data to Livewire based on Wireable', function () {
@@ -16,7 +17,7 @@ it('stores and receives data to Livewire based on Wireable', function () {
 
     // Verify the serialized data structure
     expect($livewireData)->toBeArray()
-        ->and($livewireData)->toBe(['cents' => 12345]);
+        ->and($livewireData)->toBe(['cents' => 12345, 'code' => 'EUR']);
 
     // Deserialize from Livewire format
     $deserializedCurrency = Currency::fromLivewire($livewireData);
@@ -133,3 +134,124 @@ it('can see if it is empty', function ($cents, bool $isEmpty) {
     [1, false],
     [1000000000, false],
 ]);
+
+it('defaults currency code to EUR', function () {
+    expect(Currency::fromCents(500)->code())->toBe('EUR')
+        ->and(Currency::fromFloat(10.5)->code())->toBe('EUR')
+        ->and(Currency::fromAny('12,34')->code())->toBe('EUR');
+});
+
+it('accepts currency code in factory methods', function () {
+    expect(Currency::fromCents(500, 'USD')->code())->toBe('USD')
+        ->and(Currency::fromFloat(10.5, 'GBP')->code())->toBe('GBP')
+        ->and(Currency::fromAny('12,34', 'CHF')->code())->toBe('CHF');
+});
+
+it('returns same instance when fromAny receives a Currency', function () {
+    $currency = Currency::fromCents(100, 'USD');
+    expect(Currency::fromAny($currency))->toBe($currency);
+});
+
+it('str() adapts symbol to currency code', function ($code, $expectedSymbol) {
+    $currency = Currency::fromCents(100, $code);
+    expect($currency->str())->toEndWith($expectedSymbol);
+})->with([
+    ['EUR', '€'],
+    ['USD', '$'],
+    ['GBP', '£'],
+    ['CHF', 'CHF'],
+    ['JPY', '¥'],
+    ['XYZ', 'XYZ'],
+]);
+
+it('withCode() creates new instance with different code', function () {
+    $eur = Currency::fromCents(100, 'EUR');
+    $usd = $eur->withCode('USD');
+    expect($usd->code())->toBe('USD')
+        ->and($usd->centValue)->toBe(100)
+        ->and($eur->code())->toBe('EUR');
+});
+
+it('plus() throws MismatchedCurrencyException for different codes', function () {
+    Currency::fromCents(100, 'USD')->plus(Currency::fromCents(100, 'EUR'));
+})->throws(MismatchedCurrencyException::class);
+
+it('minus() throws MismatchedCurrencyException for different codes', function () {
+    Currency::fromCents(100, 'USD')->minus(Currency::fromCents(100, 'EUR'));
+})->throws(MismatchedCurrencyException::class);
+
+it('plus() works for same currency code', function () {
+    $result = Currency::fromCents(100, 'USD')->plus(Currency::fromCents(50, 'USD'));
+    expect($result->centValue)->toBe(150)
+        ->and($result->code())->toBe('USD');
+});
+
+it('formatted() returns German format with thousands separator', function ($cents, $expected) {
+    expect(Currency::fromCents($cents)->formatted())->toBe($expected);
+})->with([
+    [123450, '1.234,50'],
+    [100000000, '1.000.000,00'],
+    [-123450, '-1.234,50'],
+    [0, '0,00'],
+    [5, '0,05'],
+]);
+
+it('formattedStr() returns formatted value with currency symbol', function ($cents, $code, $expected) {
+    expect(Currency::fromCents($cents, $code)->formattedStr())->toBe($expected);
+})->with([
+    [123450, 'EUR', '1.234,50 €'],
+    [100000000, 'EUR', '1.000.000,00 €'],
+    [-123450, 'EUR', '-1.234,50 €'],
+    [123450, 'USD', '1.234,50 $'],
+    [123450, 'GBP', '1.234,50 £'],
+    [123450, 'XYZ', '1.234,50 XYZ'],
+]);
+
+it('dividedBy() divides with half-up rounding', function ($cents, $divisor, $expectedCents) {
+    expect(Currency::fromCents($cents)->dividedBy($divisor)->centValue)->toBe($expectedCents);
+})->with([
+    [1000, 3, 333],
+    [1001, 3, 334],
+    [100, 2, 50],
+    [100, -2, -50],
+    [-1000, 3, -333],
+]);
+
+it('dividedBy() preserves currency code', function () {
+    $result = Currency::fromCents(1000, 'USD')->dividedBy(3);
+    expect($result->centValue)->toBe(333)
+        ->and($result->code())->toBe('USD');
+});
+
+it('dividedBy() throws DivisionByZeroError for zero divisor', function () {
+    Currency::fromCents(100)->dividedBy(0);
+})->throws(DivisionByZeroError::class);
+
+it('Livewire round-trip preserves currency code', function () {
+    $original = Currency::fromCents(12345, 'USD');
+    $data = $original->toLivewire();
+    $restored = Currency::fromLivewire($data);
+    expect($restored->centValue)->toBe(12345)
+        ->and($restored->code())->toBe('USD');
+});
+
+it('Legacy Livewire payload defaults to EUR', function () {
+    $restored = Currency::fromLivewire(['cents' => 123]);
+    expect($restored->centValue)->toBe(123)
+        ->and($restored->code())->toBe('EUR');
+});
+
+it('VAT methods preserve currency code', function () {
+    $vat = Vat::fromRate(0.19);
+    $usd = Currency::fromCents(11900, 'USD');
+    expect($usd->vatFromGross($vat)->code())->toBe('USD')
+        ->and($usd->fromGrossToNet($vat)->code())->toBe('USD')
+        ->and($usd->vatFromNet($vat)->code())->toBe('USD')
+        ->and($usd->fromNetToGross($vat)->code())->toBe('USD');
+});
+
+it('times() preserves currency code', function () {
+    $result = Currency::fromCents(100, 'GBP')->times(1.5);
+    expect($result->centValue)->toBe(150)
+        ->and($result->code())->toBe('GBP');
+});

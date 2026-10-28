@@ -14,36 +14,50 @@ use Stringable;
  */
 final readonly class Currency implements Stringable, Wireable
 {
+    /**
+     * Symbol map for common ISO 4217 currency codes.
+     */
+    private const array SYMBOLS = [
+        'EUR' => '€', 'USD' => '$', 'GBP' => '£', 'CHF' => 'CHF',
+        'JPY' => '¥', 'CNY' => '¥', 'SEK' => 'kr', 'NOK' => 'kr',
+        'DKK' => 'kr', 'PLN' => 'zł', 'CZK' => 'Kč', 'HUF' => 'Ft',
+        'RON' => 'lei', 'BGN' => 'лв', 'HRK' => 'kn', 'RUB' => '₽',
+        'TRY' => '₺', 'INR' => '₹', 'BRL' => 'R$', 'AUD' => '$',
+    ];
+
     public int $centValue;
 
-    public function __construct(int $cents)
+    private string $code;
+
+    public function __construct(int $cents, string $code = 'EUR')
     {
         $this->centValue = $cents;
+        $this->code = $code;
     }
 
     /**
      * static constructor from any value
      */
-    public static function fromAny(mixed $value): Currency
+    public static function fromAny(mixed $value, string $code = 'EUR'): Currency
     {
         if ($value instanceof self) {
             return $value;
         }
 
         if (is_array($value)) {
-            return new self((int) ($value['cents'] ?? $value['centValue'] ?? 0));
+            return new self((int) ($value['cents'] ?? $value['centValue'] ?? 0), $code);
         }
 
         if ($value === null || $value === '') {
-            return new self(0);
+            return new self(0, $code);
         }
 
         if (is_int($value)) {
-            return new self($value * 100);
+            return new self($value * 100, $code);
         }
 
         if (is_float($value)) {
-            return self::fromFloat($value);
+            return self::fromFloat($value, $code);
         }
 
         // Cast everything else to string and strip non-digit/decimal/separator chars
@@ -51,7 +65,7 @@ final readonly class Currency implements Stringable, Wireable
         $clean = trim($clean);
 
         if ($clean === '') {
-            return new self(0);
+            return new self(0, $code);
         }
 
         if (preg_match('/^.*?,*\d+\.\d+$/', $clean)) {
@@ -63,23 +77,39 @@ final readonly class Currency implements Stringable, Wireable
             $clean = str_replace(',', '.', $clean);
         }
 
-        return self::fromFloat((float) $clean);
+        return self::fromFloat((float) $clean, $code);
     }
 
     /**
      * static constructor from a float value
      */
-    public static function fromFloat(?float $value): self
+    public static function fromFloat(?float $value, string $code = 'EUR'): self
     {
-        return new self((int) round(($value ?? 0.0) * 100));
+        return new self((int) round(($value ?? 0.0) * 100), $code);
     }
 
     /**
      * static constructor from cents
      */
-    public static function fromCents(int $cents): self
+    public static function fromCents(int $cents, string $code = 'EUR'): self
     {
-        return new self($cents);
+        return new self($cents, $code);
+    }
+
+    /**
+     * Returns the ISO 4217 currency code.
+     */
+    public function code(): string
+    {
+        return $this->code;
+    }
+
+    /**
+     * Returns a new Currency instance with the specified currency code.
+     */
+    public function withCode(string $code): self
+    {
+        return new self($this->centValue, $code);
     }
 
     /**
@@ -89,7 +119,7 @@ final readonly class Currency implements Stringable, Wireable
     {
         // The formula is: VAT = Gross * (Rate / (1 + Rate))
         // To maximize precision, we use centValue and multiply by Rate, then divide by (1 + Rate)
-        return new self((int) round($this->centValue * $vat->rate / (1 + $vat->rate)));
+        return new self((int) round($this->centValue * $vat->rate / (1 + $vat->rate)), $this->code);
     }
 
     /**
@@ -107,7 +137,7 @@ final readonly class Currency implements Stringable, Wireable
     public function fromGrossToNet(Vat $vat): self
     {
         // The formula is: Net = Gross / (1 + Rate)
-        return new self((int) round($this->centValue / (1 + $vat->rate)));
+        return new self((int) round($this->centValue / (1 + $vat->rate)), $this->code);
     }
 
     /**
@@ -128,11 +158,43 @@ final readonly class Currency implements Stringable, Wireable
     }
 
     /**
+     * Returns the formatted value with thousands separator (German format).
+     */
+    public function formatted(): string
+    {
+        return number_format($this->toFloat(), 2, ',', '.');
+    }
+
+    /**
+     * Returns the formatted value with thousands separator and currency symbol.
+     */
+    public function formattedStr(): string
+    {
+        $symbol = self::SYMBOLS[$this->code] ?? $this->code;
+
+        return $this->formatted().' '.$symbol;
+    }
+
+    /**
+     * Divides the currency value by the given divisor with half-up rounding.
+     */
+    public function dividedBy(int $divisor): self
+    {
+        if ($divisor === 0) {
+            throw new \DivisionByZeroError('Cannot divide by zero');
+        }
+
+        return self::fromCents((int) round($this->centValue / $divisor), $this->code);
+    }
+
+    /**
      * exports to formatted currency string
      */
     public function str(): string
     {
-        return $this->__toString().' €';
+        $symbol = self::SYMBOLS[$this->code] ?? $this->code;
+
+        return $this->__toString().' '.$symbol;
     }
 
     /**
@@ -148,7 +210,11 @@ final readonly class Currency implements Stringable, Wireable
      */
     public function plus(Currency $add): self
     {
-        return self::fromCents($this->centValue + $add->centValue);
+        if ($this->code !== $add->code) {
+            throw MismatchedCurrencyException::create($this->code, $add->code);
+        }
+
+        return self::fromCents($this->centValue + $add->centValue, $this->code);
     }
 
     /**
@@ -156,7 +222,11 @@ final readonly class Currency implements Stringable, Wireable
      */
     public function minus(Currency $sub): self
     {
-        return self::fromCents($this->centValue - $sub->centValue);
+        if ($this->code !== $sub->code) {
+            throw MismatchedCurrencyException::create($this->code, $sub->code);
+        }
+
+        return self::fromCents($this->centValue - $sub->centValue, $this->code);
     }
 
     /**
@@ -164,24 +234,31 @@ final readonly class Currency implements Stringable, Wireable
      */
     public function times(float $factor): self
     {
-        return self::fromCents((int) round($this->centValue * $factor));
+        return self::fromCents((int) round($this->centValue * $factor), $this->code);
     }
 
     /**
      * exports to Livewire format (numeric scalar)
      * must be an array even when not explicitly documented
      *
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     public function toLivewire(): array
     {
         return [
             'cents' => $this->centValue,
+            'code' => $this->code,
         ];
     }
 
     public static function fromLivewire(mixed $value): self
     {
+        if (is_array($value)) {
+            $code = $value['code'] ?? 'EUR';
+
+            return self::fromAny($value, $code);
+        }
+
         return self::fromAny($value);
     }
 
